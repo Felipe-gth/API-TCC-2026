@@ -36,60 +36,7 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    [Authorize(Roles = "C")]
-    [HttpPost("createAdress")]
-    public async Task<IActionResult> CreateAdress([FromBody] AdressEntryDTO dto)
-    {
-        try
-        {
-            var result = await _patient.CreateAdressAsync(dto);
-            if (result.Data != null)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
-    [Authorize(Roles = "C")]
-    [HttpPost("createNumber")]
-    public async Task<IActionResult> CreatePhoneNumberAsync([FromBody] PhoneNumberEntryDTO dto)
-    {
-        try
-        {
-            var result = await _patient.CreatePhoneNumberAsync(dto);
-            if (result.Data != null)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
-    [Authorize(Roles = "C")]
-    [HttpPost("createEmail")]
-    public async Task<IActionResult> CreateEmailAsync([FromBody] EmailEntryDTO dto)
-    {
-        try
-        {
-            var result = await _patient.CreateEmailAsync(dto);
-            if (result.Data != null)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
+    
     [Authorize(Roles = "P")]
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetPatientById(int id)
@@ -126,22 +73,5 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    [Authorize(Roles = "P,A")]
-    [HttpPut("EditPatient")]
-    public async Task<IActionResult> EditPatient([FromBody] EditPatientDTO dto)
-    {
-        try
-        {
-            var result = await _patient.EditPatientAsync(dto);
-            if (result.Data)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
+    
 }

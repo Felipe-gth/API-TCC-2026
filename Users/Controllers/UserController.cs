@@ -2,6 +2,9 @@
 using Api.User.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using Api.User.Interfaces;
+using Api.User.DTOs.Email;
+using Microsoft.AspNetCore.Authorization;
+using Api.User.DTOs.Phone;
 
 namespace Api.User.Controllers;
 
@@ -50,7 +53,61 @@ public class UserController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+    [Authorize(Roles = "C")]
+    [HttpPost("createAdress")]
+    public async Task<IActionResult> CreateAdress([FromBody] AdressEntryDTO dto)
+    {
+        try
+        {
+            var result = await _person.CreateAdressAsync(dto);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 
+    [Authorize(Roles = "C")]
+    [HttpPost("createNumber")]
+    public async Task<IActionResult> CreatePhoneNumberAsync([FromBody] PhoneNumberEntryDTO dto)
+    {
+        try
+        {
+            var result = await _person.CreatePhoneNumberAsync(dto);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+    [Authorize(Roles = "C")]
+    [HttpPost("createEmail")]
+    public async Task<IActionResult> CreateEmailAsync([FromBody] EmailEntryDTO dto)
+    {
+        try
+        {
+            var result = await _person.CreateEmailAsync(dto);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
     
 
 }

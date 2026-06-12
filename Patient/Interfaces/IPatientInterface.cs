@@ -15,10 +15,6 @@ namespace Api.Patient.Interfaces;
 public interface IPatientInterface
 {
     Task<Result<ReturnUserDTO>> CreatePatientAsync(RegisterPatientDTO dto);
-    Task<Result<AdressReturnDTO>> CreateAdressAsync(AdressEntryDTO dto);
-    Task<Result<PhoneNumberReturnDTO>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
-    Task<Result<EmailReturnDTO>> CreateEmailAsync(EmailEntryDTO dto);
     Task<Result<ReturnUserDTO>> GetPatientByIdAsync(int id);
     Task<Result<IEnumerable<ListPatientDTO>>> ListPatient();
-    Task<Result<bool>> EditPatientAsync(EditPatientDTO dto);
 }

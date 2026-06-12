@@ -51,66 +51,7 @@ public class PatientService : IPatientInterface
     //Login
 
 
-    public async Task<Result<AdressReturnDTO>> CreateAdressAsync(AdressEntryDTO dto)
-    {
-        var adress = new AdressModel(dto);
-        int data = await _patientSQL.CreateAdressAsync(adress);
-        if (data <= 0)
-        {
-            var result = new Result<AdressReturnDTO>
-            {
-                Sucess = false,
-                Data = null
-            };
-            return result;
-        }
-        var returnDTO = new AdressReturnDTO(data, adress.CEP, adress.CCity, adress.CState, adress.CNumber, adress.IsApartment, adress.ApartmentNumber);
-        return new Result<AdressReturnDTO>
-        {
-            Sucess = true,
-            Data = returnDTO
-        };
-    }
-
-    public async Task<Result<PhoneNumberReturnDTO>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto)
-    {
-        var number = new NumberModel(dto.Id, dto.Number, dto.CountryCode, dto.DDD, dto.IsEmergencyContact);
-        int data = await _patientSQL.CreatePhoneNumberAsync(number);
-        if (data <= 0)
-        {
-            return new Result<PhoneNumberReturnDTO>
-            {
-                Sucess = false,
-                Data = null
-            };
-        }
-        var returnDTO = new PhoneNumberReturnDTO(data, number.NNumber, number.NDDD);
-        return new Result<PhoneNumberReturnDTO>
-        {
-            Sucess = true,
-            Data = returnDTO
-        };
-    }
-
-    public async Task<Result<EmailReturnDTO>> CreateEmailAsync(EmailEntryDTO dto)
-    {
-        var email = new EmailModel(dto.Id, dto.Address, dto.Extension);
-        int data = await _patientSQL.CreateEmailAsync(email);
-        if (data <= 0)
-        {
-            return new Result<EmailReturnDTO>
-            {
-                Sucess = false,
-                Data = null
-            };
-        }
-        var returnDTO = new EmailReturnDTO(data, email.EAddress, email.EExtension);
-        return new Result<EmailReturnDTO>
-        {
-            Sucess = true,
-            Data = returnDTO
-        };
-    }
+    
 
     public async Task<Result<ReturnUserDTO>> GetPatientByIdAsync(int id)
     {

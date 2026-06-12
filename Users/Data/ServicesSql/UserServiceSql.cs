@@ -104,4 +104,25 @@ public class UserServiceSql : IUserSQL
         
         return result > 0;
     }
+
+    public async Task<bool> CreateEmailAsync(EmailModel email){
+        using var connection = DBConnection.Connection();
+        int result = 0;
+        
+        return result > 0;
+    }
+
+    public async Task<bool> CreatePhoneNumberAsync(NumberModel number){
+        using var connection = DBConnection.Connection();
+        int result = 0;
+        
+        return result > 0;
+    }
+
+    public async Task<bool> CreateAdressAsync(AdressModel adress){
+        using var connection = DBConnection.Connection();
+        int result = 0;
+        
+        return result > 0;
+    }
 }
