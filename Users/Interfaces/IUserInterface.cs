@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 using Api.User.DTOs.Adress;
 
@@ -18,4 +19,20 @@ public interface IUserInterface
     Task<Result<bool>> CreateAdressAsync(AdressEntryDTO dto);
     Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
     Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto);
+=======
+
+using Api.User.DTOs.Adress;
+
+namespace Api.User.Interfaces;
+
+using Api.User.DTOs.Login;
+using Api.User.DTOs.Return;
+using Api.User.DTOs.Result;
+
+
+public interface IUserInterface
+{
+    Task<Result<ReturnUserDTO>> LoginAsync(LoginUserDTO dto);
+    Task<bool> EditAdressAsync(AdressEntryDTO dto);
+>>>>>>> b3e63b1 (Pull rebase)
 }
