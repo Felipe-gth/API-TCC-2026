@@ -2,17 +2,17 @@ namespace Api.User.Models;
 public class NumberModel
 {
     public int Id { get; private set; }
-    public string NNumber { get;  private set; }
-    public string NCountryCode { get;  private set; }
-    public string NDDD { get;  private set; }
+    public string Number { get;  private set; }
+    public string CountryCode { get;  private set; }
+    public string DDD { get;  private set; }
     public bool IsEmergencyContact { get;  private set; }
 
-    public NumberModel(int id, string nNumber, string nCountryCode, string nDDD, bool isEmergencyContact)
+    public NumberModel(int id, string number, string countryCode, string ddd, bool isEmergencyContact)
     {
         Id = id;
-        NNumber = nNumber;
-        NCountryCode = nCountryCode;
-        NDDD = nDDD;
+        Number = number;
+        CountryCode = countryCode;
+        DDD = ddd;
         IsEmergencyContact = isEmergencyContact;
     }
 }

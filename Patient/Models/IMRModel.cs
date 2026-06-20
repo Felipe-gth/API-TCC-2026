@@ -5,19 +5,19 @@ public class IMRModel
 {
     public int Id { get; private set; }
     public bool HadTreatment { get; private set; }
-    public string PhysicalHeath { get; private set; }
+    public string PhysicalHealth { get; private set; }
     public char MaritalStatus { get; private set; }
     public string Habits { get; private set; }
-    public string Searchreason { get; private set; }
+    public string SearchReason { get; private set; }
 
-    public IMRModel(int id, bool hadTreatment, string physicalHeath, char maritalStatus, string habits, string searchreason)
+    public IMRModel(int id, bool hadTreatment, string physicalHealth, char maritalStatus, string habits, string searchReason)
     {
         Id = id;
         HadTreatment = hadTreatment;
-        PhysicalHeath = physicalHeath;
+        PhysicalHealth = physicalHealth;
         MaritalStatus = maritalStatus;
         Habits = habits;
-        Searchreason = searchreason;
+        SearchReason = searchReason;
     }
 
 }

@@ -3,7 +3,7 @@ using Api.Admin.Interfaces;
 using Api.Admin.DTOs.Register;
 using Api.Admin.Models;
 using Api.Admin.Data.InterfaceSql;
-public class AdminService : IAdmInterface
+public class AdminService : IAdminInterface
 {
     private readonly IAdminInterfaceSql _adminInterfaceSql;
 
@@ -11,7 +11,7 @@ public class AdminService : IAdmInterface
     {
         _adminInterfaceSql = adminInterfaceSql;
     }
-    public async Task<bool> CreateAdmin(RegisterAdminDTO admin)
+    public async Task<bool> CreateAdminAsync(RegisterAdminDTO admin)
     {
         var adminModel = new AdminModel(admin.Name, admin.LastName, admin.CPF, admin.Password, admin.Role);
         var id = await _adminInterfaceSql.CreateAdminAsync(adminModel);

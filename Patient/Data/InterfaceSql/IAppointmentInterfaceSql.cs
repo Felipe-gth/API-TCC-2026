@@ -1,8 +1,7 @@
 
-namespace Api.Patient.Models;
+namespace Api.Patient.Data.InterfaceSql;
 
 using Api.Patient.Models;
-using Domain.Models.Appointment;
 
 public interface IAppointmentInterfaceSql
 {

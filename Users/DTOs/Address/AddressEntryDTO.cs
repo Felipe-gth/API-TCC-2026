@@ -1,8 +1,8 @@
-namespace Api.User.DTOs.Adress;
+namespace Api.User.DTOs.Address;
 using System.ComponentModel.DataAnnotations;
 
 
-public class AdressEntryDTO{
+public class AddressEntryDTO{
 
     [Required(ErrorMessage = "Id is required.")]
     public int Id {get; set;}

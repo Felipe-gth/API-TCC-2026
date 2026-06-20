@@ -5,25 +5,25 @@ namespace Api.Admin.DTOs.Register;
 
 public class RegisterAdminDTO
 {
-    [Required(ErrorMessage = "O nome é obrigatório.")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "O nome deve ter entre 2 e 100 caracteres.")]
+    [Required(ErrorMessage = "Name is required.")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")]
     public string Name { get; set; }
 
-    [Required(ErrorMessage = "O sobrenome é obrigatório.")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "O sobrenome deve ter entre 2 e 100 caracteres.")]
+    [Required(ErrorMessage = "Last name is required.")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 100 characters.")]
     public string LastName { get; set; }
 
-    [Required(ErrorMessage = "O CPF é obrigatório.")]
-    [StringLength(11, MinimumLength = 11, ErrorMessage = "O CPF deve conter 11 dígitos.")]
+    [Required(ErrorMessage = "CPF is required.")]
+    [StringLength(11, MinimumLength = 11, ErrorMessage = "CPF must have 11 digits.")]
     public string CPF { get; set; }
 
 
-    [Required(ErrorMessage = "A senha é obrigatória.")]
-    [MinLength(6, ErrorMessage = "A senha deve ter pelo menos 6 caracteres.")]
+    [Required(ErrorMessage = "Password is required.")]
+    [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
     public string Password { get; set; }
 
-    [Required(ErrorMessage = "O cargo é obrigatório.")]
-    [RegularExpression("A", ErrorMessage = "O cargo deve ser 'A' para administrador.")]
+    [Required(ErrorMessage = "Role is required.")]
+    [RegularExpression("A", ErrorMessage = "Role must be 'A' for admin.")]
     public string Role { get; set; }
 
 

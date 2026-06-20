@@ -16,7 +16,7 @@ public class DBConnection
         }
         catch (Exception  ex)
         {
-            throw new Exception($"Erro ao conectar no banco: {ex.Message}");
+            throw new Exception($"Error connecting to database: {ex.Message}");
         } 
     }
 }

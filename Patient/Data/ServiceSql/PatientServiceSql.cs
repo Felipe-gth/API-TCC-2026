@@ -38,7 +38,7 @@ public class PatientServiceSql : IPatientInterfaceSql
     }
 
 
-    public async Task<int> CreateAdressAsync(AdressModel adress)
+    public async Task<int> CreateAddressAsync(AddressModel adress)
     {
 
         if (adress.IsApartment)

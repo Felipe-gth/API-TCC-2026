@@ -1,8 +1,8 @@
-﻿using API.DTOs.Psychologist.Update;
+﻿using Api.Psychologist.DTOs.Update;
 using Api.Psychologist.DTOs.Register;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using tcc.Psychologist.Interfaces;
+using Api.Psychologist.Interfaces;
 
 namespace Api.Psychologist.Controllers;
 
@@ -12,19 +12,19 @@ namespace Api.Psychologist.Controllers;
 
 public class PsychologistController : ControllerBase
 {
-    private readonly IPsychologistInterface _psicologo;
-    public PsychologistController(IPsychologistInterface psicologo)
+    private readonly IPsychologistInterface _psychologist;
+    public PsychologistController(IPsychologistInterface psychologist)
     {
-        _psicologo = psicologo;
+        _psychologist = psychologist;
     }
 
     [Authorize(Roles = "A")]
-    [HttpGet("/api/ListPsicologo")]
-    public async Task<IActionResult> ListPsicologo()
+    [HttpGet("list")]
+    public async Task<IActionResult> ListPsychologist()
     {
         try
         {
-            var result = await _psicologo.ListPsicologo();
+            var result = await _psychologist.ListPsychologist();
             if (result.Data != null)
             {
                 return Ok(result);
@@ -40,12 +40,12 @@ public class PsychologistController : ControllerBase
         }
         
     }
-    [HttpPost("/api/RegisterPsicologo")]
-    public async Task<IActionResult> RegisterPsicologo([FromBody] EntryPsicologoDTO dto)
+    [HttpPost("register")]
+    public async Task<IActionResult> RegisterPsychologist([FromBody] RegisterPsychologistDTO dto)
     {
         try
         {
-            var result = await _psicologo.RegisterPsicologo(dto);
+            var result = await _psychologist.RegisterPsychologist(dto);
             if (result.Data != null)
             {
                 return Ok(result);
@@ -61,12 +61,12 @@ public class PsychologistController : ControllerBase
         }
     }
 
-    [HttpPut("/api/EditPsicologo")]
-    public async Task<IActionResult> EditPsicologo([FromBody] UpdatePsicologoDTO dto)
+    [HttpPut("edit")]
+    public async Task<IActionResult> EditPsychologist([FromBody] UpdatePsychologistDTO dto)
     {
         try
         {
-            var result = await _psicologo.EditPsicologo(dto);
+            var result = await _psychologist.EditPsychologist(dto);
             if (result.Data)
             {
                 return Ok(result);

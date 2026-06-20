@@ -8,12 +8,12 @@ using Api.Patient.Interfaces;
 using Api.Psychologist.Data.InterfaceSql;
 using Api.Psychologist.Data.ServiceSql;
 using Api.Psychologist.Services;
-using Data.Interface;
+using Api.User.Data.InterfaceSql;
 using Api.User.Data.ServicesSql;
 using Api.User.Interfaces;
 using Api.User.Services;
-using tcc.Patient.Services;
-using tcc.Psychologist.Interfaces;
+using Api.Patient.Services;
+using Api.Psychologist.Interfaces;
 using Api.Admin.Interfaces;
 using Api.Admin.Services;
 using Microsoft.OpenApi.Models;
@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Digite o token JWT"
+        Description = "Enter the JWT token"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -73,7 +73,7 @@ builder.Services.AddControllers();
 
 // services
     //User
-        builder.Services.AddScoped<IUserSQL, UserServiceSql>();
+        builder.Services.AddScoped<IUserSql, UserServiceSql>();
         builder.Services.AddScoped<IUserInterface, UserService>();
     //Psychologist
         builder.Services.AddScoped<IPsychologistInterface, PsychologistService>();
@@ -84,7 +84,7 @@ builder.Services.AddControllers();
     //Auth
         builder.Services.AddScoped<IAuthInterface, AuthService>();
     //Admin
-        builder.Services.AddScoped<IAdmInterface, AdminService>();
+        builder.Services.AddScoped<IAdminInterface, AdminService>();
         builder.Services.AddScoped<IAdminInterfaceSql, AdminServiceSql>();
 
 //JWT

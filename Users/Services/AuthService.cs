@@ -14,7 +14,7 @@ public class AuthService : IAuthInterface
     {
         _config = config;
     }
-    public string newToken(int id, string role)
+    public string NewToken(int id, string role)
     {
         var claims = new[]
         {

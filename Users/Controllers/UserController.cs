@@ -1,4 +1,4 @@
-﻿using Api.User.DTOs.Adress;
+﻿using Api.User.DTOs.Address;
 using Api.User.DTOs.Login;
 using Microsoft.AspNetCore.Mvc;
 using Api.User.Interfaces;
@@ -13,18 +13,18 @@ namespace Api.User.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly IUserInterface _person;
-    public UserController(IUserInterface person)
+    private readonly IUserInterface _userService;
+    public UserController(IUserInterface userService)
     {
-        _person = person;
+        _userService = userService;
     }
 
-    [HttpPost("Login")]
+    [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginUserDTO dto){
         try
         {
-            var result = await _person.LoginAsync(dto);
-            if (!result.Sucess)
+            var result = await _userService.LoginAsync(dto);
+            if (!result.Success)
             {
                 return BadRequest(result);
             }
@@ -36,12 +36,12 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPut("editAdress")]
-    public async Task<IActionResult> EditAdress([FromBody] AdressEntryDTO dto)
+    [HttpPut("editAddress")]
+    public async Task<IActionResult> EditAddress([FromBody] AddressEntryDTO dto)
     {
         try
         {
-            var result = await _person.EditAdressAsync(dto);
+            var result = await _userService.EditAddressAsync(dto);
             if (result)
             {
                 return Ok(result);
@@ -54,12 +54,12 @@ public class UserController : ControllerBase
         }
     }
     [Authorize(Roles = "C")]
-    [HttpPost("createAdress")]
-    public async Task<IActionResult> CreateAdress([FromBody] AdressEntryDTO dto)
+    [HttpPost("createAddress")]
+    public async Task<IActionResult> CreateAddress([FromBody] AddressEntryDTO dto)
     {
         try
         {
-            var result = await _person.CreateAdressAsync(dto);
+            var result = await _userService.CreateAddressAsync(dto);
             if (result.Data != null)
             {
                 return Ok(result);
@@ -78,7 +78,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _person.CreatePhoneNumberAsync(dto);
+            var result = await _userService.CreatePhoneNumberAsync(dto);
             if (result.Data != null)
             {
                 return Ok(result);
@@ -96,7 +96,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _person.CreateEmailAsync(dto);
+            var result = await _userService.CreateEmailAsync(dto);
             if (result.Data != null)
             {
                 return Ok(result);

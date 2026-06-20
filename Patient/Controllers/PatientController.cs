@@ -1,7 +1,7 @@
 ﻿using Api.Patient.DTOs.Edit;
 using Api.Patient.DTOs.Register;
 using Api.Patient.Interfaces;
-using Api.User.DTOs.Adress;
+using Api.User.DTOs.Address;
 using Api.User.DTOs.Email;
 using Api.User.DTOs.Phone;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +38,7 @@ public class PatientController : ControllerBase
     }
     
     [Authorize(Roles = "P")]
-    [HttpGet("GetById/{id}")]
+    [HttpGet("get-by-id/{id}")]
     public async Task<IActionResult> GetPatientById(int id)
     {
         try
@@ -56,7 +56,7 @@ public class PatientController : ControllerBase
         }
     }
     //[Authorize(Roles = "P,A")]
-    [HttpGet("ListPatient")]
+    [HttpGet("list")]
     public async Task<IActionResult> ListPatient()
     {
         try

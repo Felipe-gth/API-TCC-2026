@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
 
-namespace Api.User.DTOs.Return.Adress;
+namespace Api.User.DTOs.Return.Address;
 
 
-public class AdressReturnDTO{
+public class AddressReturnDTO{
     public int Id {get; set;}
     public string CEP {get; set;}
     public string City {get; set;}
@@ -13,7 +13,7 @@ public class AdressReturnDTO{
     public int ApartmentNumber {get; set;}
 
 
-    public AdressReturnDTO(int id, string cep, string city, string state, string number, bool isApartment, int apartmentNumber)
+    public AddressReturnDTO(int id, string cep, string city, string state, string number, bool isApartment, int apartmentNumber)
     {
         Id = id;
         CEP = cep;

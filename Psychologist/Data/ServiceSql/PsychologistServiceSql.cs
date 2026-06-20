@@ -9,18 +9,18 @@ namespace Api.Psychologist.Data.ServiceSql;
 public class PsychologistServiceSql : IPsychologistInterfaceSql
 
 {
-    public async Task<IEnumerable<ListPsicologoDTO>> ListPsicologo()
+    public async Task<IEnumerable<ListPsychologistDTO>> ListPsychologist()
     {
         using var connection = DBConnection.Connection();
 
-        var list = await connection.QueryAsync<ListPsicologoDTO>(
+        var list = await connection.QueryAsync<ListPsychologistDTO>(
             "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist"
         );
 
         return list;
     }
 
-    public async Task<int> RegisterPsicologo(PsychologistModel p)
+    public async Task<int> RegisterPsychologist(PsychologistModel p)
 {
     using var connection = DBConnection.Connection();
 
@@ -40,7 +40,7 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
             password = hashpass,
             role = "P",
             crp = p.CRP,
-            specialization = p.Espciacilization
+            specialization = p.Specialization
         });
 
     int id = await connection.QuerySingleAsync<int>(
@@ -50,13 +50,13 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
     return id;
 }
 
-    public async Task<int> EditPsicologo(PsychologistModel p)
+    public async Task<int> EditPsychologist(PsychologistModel p)
     {
         using var connection = DBConnection.Connection();
         string hashpass = BCrypt.Net.BCrypt.HashPassword(p.Password);
         var updated = await connection.ExecuteAsync(
             "UPDATE psychologist SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password, crp = @crp, specialization = @specialization WHERE id = @id",
-            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, password = hashpass, crp = p.CRP, specialization = p.Espciacilization }
+            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, password = hashpass, crp = p.CRP, specialization = p.Specialization }
         );
         return updated;
     }

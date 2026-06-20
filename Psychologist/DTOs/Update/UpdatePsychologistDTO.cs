@@ -1,9 +1,9 @@
 ﻿using Api.User.DTOs;
 
-namespace API.DTOs.Psychologist.Update;
+namespace Api.Psychologist.DTOs.Update;
 using System.ComponentModel.DataAnnotations;
 
-public class UpdatePsicologoDTO : UserModelDTO
+public class UpdatePsychologistDTO : UserModelDTO
 {
     [Required(ErrorMessage = "Id is required")]
     [Range(1, int.MaxValue, ErrorMessage = "Id must be a positive integer")]
@@ -14,7 +14,7 @@ public class UpdatePsicologoDTO : UserModelDTO
     [MaxLength(7, ErrorMessage = "CRP required 7 characters")]
     public string CRP { get; set; }
 
-    [Required(ErrorMessage = "Especiacilization is required")]
-    [MaxLength(50, ErrorMessage = "Especiacilization must be at most 50 characters long")]
-    public string Espciacilization { get; set; }
+    [Required(ErrorMessage = "Specialization is required")]
+    [MaxLength(50, ErrorMessage = "Specialization must be at most 50 characters long")]
+    public string Specialization { get; set; }
 }

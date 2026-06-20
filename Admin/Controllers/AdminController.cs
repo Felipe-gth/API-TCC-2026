@@ -10,18 +10,18 @@ namespace Api.Admin.Controllers;
 [Route("api/[controller]")]
 public class AdminController : ControllerBase
 {
-    private readonly IAdmInterface _admin;
-    public AdminController(IAdmInterface admin)
+    private readonly IAdminInterface _admin;
+    public AdminController(IAdminInterface admin)
     {
         _admin = admin;
     }
     //[Authorize(Roles = "A")]
     [HttpPost("createAdmin")]
-    public async Task<IActionResult> CreateAdmin([FromBody] RegisterAdminDTO dto)
+    public async Task<IActionResult> CreateAdminAsync([FromBody] RegisterAdminDTO dto)
     {
         try
         {
-            var result = await _admin.CreateAdmin(dto);
+            var result = await _admin.CreateAdminAsync(dto);
             if (result)
             {
                 return Ok(result);

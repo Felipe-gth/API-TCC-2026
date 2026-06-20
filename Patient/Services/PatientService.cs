@@ -3,18 +3,18 @@ using Api.Patient.Data.InterfaceSql;
 using Api.Patient.DTOs.Edit;
 using Api.Patient.DTOs.List;
 using Api.Patient.DTOs.Register;
-using Api.Patient.DTOs.Result;
+using Api.Shared.DTOs.Result;
 using Api.Patient.Interfaces;
-using Api.User.DTOs.Adress;
+using Api.User.DTOs.Address;
 using Api.User.DTOs.Email;
 using Api.User.DTOs.Phone;
 using Api.User.DTOs.Return;
-using Api.User.DTOs.Return.Adress;
+using Api.User.DTOs.Return.Address;
 using Api.User.DTOs.Return.Email;
 using Api.User.DTOs.Return.Phone;
 using Api.User.Models;
 
-namespace tcc.Patient.Services;
+namespace Api.Patient.Services;
 
 public class PatientService : IPatientInterface
 {
@@ -34,7 +34,7 @@ public class PatientService : IPatientInterface
         {
             var result = new Result<ReturnUserDTO>
             {
-                Sucess = false,
+                Success = false,
                 Data = null
 
             };
@@ -43,7 +43,7 @@ public class PatientService : IPatientInterface
         var returndto = new ReturnUserDTO(data, "", "C");
         return new Result<ReturnUserDTO>
         {
-            Sucess = true,
+            Success = true,
             Data = returndto
         };
     }
@@ -60,13 +60,13 @@ public class PatientService : IPatientInterface
         {
             return new Result<ReturnUserDTO>
             {
-                Sucess = true,
+                Success = true,
                 Data = patient
             };
         }
         return new Result<ReturnUserDTO>
         {
-            Sucess = false,
+            Success = false,
             Data = null
         };
     }
@@ -78,7 +78,7 @@ public class PatientService : IPatientInterface
         {
             var a = new Result<IEnumerable<ListPatientDTO>>
             {
-                Sucess = true,
+                Success = true,
                 Data = result
             };
             return a;
@@ -87,7 +87,7 @@ public class PatientService : IPatientInterface
         {
             var a = new Result<IEnumerable<ListPatientDTO>>
             {
-                Sucess = false,
+                Success = false,
                 Data = null
             };
             return a;
@@ -102,13 +102,13 @@ public class PatientService : IPatientInterface
         {
             return new Result<bool>
             {
-                Sucess = true,
+                Success = true,
                 Data = true
             };
         }
         return new Result<bool>
         {
-            Sucess = false,
+            Success = false,
             Data = false
         };
     }

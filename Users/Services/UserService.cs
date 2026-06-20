@@ -1,8 +1,8 @@
 
-using Api.User.DTOs.Adress;
-using Data.Interface;
+using Api.User.DTOs.Address;
+using Api.User.Data.InterfaceSql;
 using Api.User.DTOs.Return;
-using Api.User.DTOs.Result;
+using Api.Shared.DTOs.Result;
 using Api.User.Interfaces;
 using Api.User.DTOs.Login;
 using Api.User.Models;
@@ -15,9 +15,9 @@ namespace Api.User.Services;
 public class UserService : IUserInterface
 
 {
-    private readonly IUserSQL _userSql;
+    private readonly IUserSql _userSql;
     private readonly IAuthInterface _auth;
-    public UserService(IUserSQL user, IAuthInterface auth)
+    public UserService(IUserSql user, IAuthInterface auth)
     {
         _userSql = user;
         _auth = auth;
@@ -30,28 +30,28 @@ public class UserService : IUserInterface
         var data = await _userSql.LoginAsync(user);
         if (data.Success){
             int result = await _userSql.GetId(dto.CPF, data.Role);
-            string token = _auth.newToken(result, data.Role);
+            string token = _auth.NewToken(result, data.Role);
             
             var returnDTO = new ReturnUserDTO(result, token, data.Role);
             return new Result<ReturnUserDTO>()
             {
                 Data = returnDTO,
-                Sucess = true
+                Success = true
             };
         }
         else{
             return new Result<ReturnUserDTO>()
             {
                 Data = null,
-                Sucess = false
+                Success = false
             };
         }
     }
 
-    public async Task<bool> EditAdressAsync(AdressEntryDTO dto)
+    public async Task<bool> EditAddressAsync(AddressEntryDTO dto)
     {
-        var adress = new AdressModel(dto);
-        var data = await _userSql.EditAdressAsync(adress);
+        var adress = new AddressModel(dto);
+        var data = await _userSql.EditAddressAsync(adress);
         if (data)
         {
             return true;
@@ -59,21 +59,21 @@ public class UserService : IUserInterface
         return false;
     }
 
-    public async Task<Result<bool>> CreateAdressAsync(AdressEntryDTO dto)
+    public async Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto)
     {
-        var adress = new AdressModel(dto);
-        bool data = await _userSql.CreateAdressAsync(adress);
+        var adress = new AddressModel(dto);
+        bool data = await _userSql.CreateAddressAsync(adress);
         if (!data)
         {
             return new Result<bool>
             {
-                Sucess = false,
+                Success = false,
                 Data = false
             };
         }
         return new Result<bool>
         {
-            Sucess = true,
+            Success = true,
             Data = false
         };
     }
@@ -86,13 +86,13 @@ public class UserService : IUserInterface
         {
             return new Result<bool>
             {
-                Sucess = false,
+                Success = false,
                 Data = false
             };
         }
         return new Result<bool>
         {
-            Sucess = true,
+            Success = true,
             Data = false
         };
     }
@@ -105,13 +105,13 @@ public class UserService : IUserInterface
         {
             return new Result<bool>
             {
-                Sucess = false,
+                Success = false,
                 Data = false
             };
         }
         return new Result<bool>
         {
-            Sucess = true,
+            Success = true,
             Data = false
         };
     }

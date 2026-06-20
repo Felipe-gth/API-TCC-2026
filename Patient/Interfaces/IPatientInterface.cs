@@ -2,14 +2,14 @@
 ﻿using Api.Patient.DTOs.Edit;
 using Api.Patient.DTOs.List;
 using Api.Patient.DTOs.Register;
-using Api.Patient.DTOs.Result;
+using Api.Shared.DTOs.Result;
 using Api.User.DTOs.Email;
 using Api.User.DTOs.Phone;
 using Api.User.DTOs.Return;
-using Api.User.DTOs.Return.Adress;
+using Api.User.DTOs.Return.Address;
 using Api.User.DTOs.Return.Email;
 using Api.User.DTOs.Return.Phone;
-using Api.User.DTOs.Adress;
+using Api.User.DTOs.Address;
 
 namespace Api.Patient.Interfaces;
 

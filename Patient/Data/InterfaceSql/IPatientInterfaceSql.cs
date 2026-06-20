@@ -10,7 +10,7 @@ using Api.Patient.DTOs.List;
 public interface IPatientInterfaceSql
 {
     Task<int> CreatePatientAsync(UserModel user);
-    Task<int> CreateAdressAsync(AdressModel adress);
+    Task<int> CreateAddressAsync(AddressModel adress);
     Task<int> CreatePhoneNumberAsync(NumberModel number);
     Task<int> CreateEmailAsync(EmailModel email);
     Task<ReturnUserDTO> GetPatientFromIdAsync(int id);

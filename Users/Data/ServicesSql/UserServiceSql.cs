@@ -1,11 +1,11 @@
 using Api.User.Models;
-using Data.Interface;
+using Api.User.Data.InterfaceSql;
 using Dapper;
 using Properties;
 using BCrypt;
 namespace Api.User.Data.ServicesSql;
 
-public class UserServiceSql : IUserSQL
+public class UserServiceSql : IUserSql
 {
     public async Task<(bool Success, string Role)> LoginAsync(UserModel user)
     {
@@ -82,21 +82,21 @@ public class UserServiceSql : IUserSQL
         }
     }
 
-    public async Task<bool> EditAdressAsync(AdressModel adress)
+    public async Task<bool> EditAddressAsync(AddressModel adress)
     {
         using var connection = DBConnection.Connection();
         int result = 0;
         
         if (adress.IsApartment)
         {
-            // Atualizar apenas dados de apartamento
+            // Update only apartment data
             result = await connection.ExecuteAsync(
                 "UPDATE address SET is_apartment = @IsApartment, floor = @Floor, apartment_number = @ApartmentNumber WHERE id = @Id",
                 adress);
         }
         else
         {
-            // Atualizar apenas dados de casa
+            // Update only house data
             result = await connection.ExecuteAsync(
                 "UPDATE address SET is_apartment = @IsApartment, street = @Street, number = @Number, neighborhood = @Neighborhood WHERE id = @Id",
                 adress);
@@ -119,7 +119,7 @@ public class UserServiceSql : IUserSQL
         return result > 0;
     }
 
-    public async Task<bool> CreateAdressAsync(AdressModel adress){
+    public async Task<bool> CreateAddressAsync(AddressModel adress){
         using var connection = DBConnection.Connection();
         int result = 0;
         

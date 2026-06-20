@@ -20,7 +20,7 @@ public class UserModelDTO{
     public string Age {get; set;}
 
     [Required(ErrorMessage = "Password is Required")]
-    [MinLength(6, ErrorMessage = "Password MinLenght = 6 char")]
+    [MinLength(6, ErrorMessage = "Password minimum length is 6 characters")]
     public string Password {get; set;}
 
 

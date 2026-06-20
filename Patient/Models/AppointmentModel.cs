@@ -1,4 +1,4 @@
-namespace Domain.Models.Appointment;
+namespace Api.Patient.Models;
 
 public class AppointmentModel
 {
