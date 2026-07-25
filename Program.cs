@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Api.Appointment.Services;
 using Api.Patient.Data.InterfaceSql;
 using Api.Patient.Data.ServiceSql;
 using Api.Patient.Interfaces;
@@ -19,6 +20,9 @@ using Api.Admin.Services;
 using Microsoft.OpenApi.Models;
 using Api.Admin.Data.InterfaceSql;
 using Api.Admin.Data.ServiceSql;
+using Api.Appointment.Interface;
+using Api.Appointment.Data.Interfaces;
+using Api.Appointment.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +90,9 @@ builder.Services.AddControllers();
     //Admin
         builder.Services.AddScoped<IAdminInterface, AdminService>();
         builder.Services.AddScoped<IAdminInterfaceSql, AdminServiceSql>();
+    //Appointment
+        builder.Services.AddScoped<IAppointmentInterface, AppointmentService>();
+        builder.Services.AddScoped<IAppointmentInterfaceSql, AppointmentServieSql>();
 
 //JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key not configured.");

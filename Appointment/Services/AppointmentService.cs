@@ -1,0 +1,32 @@
+namespace Api.Appointment.Services;
+
+using Api.Appointment.Interface;
+using Api.Appointment.Data.Interfaces;
+using Api.Appointment.Models;
+using Api.Shared.DTOs.Result;
+using Api.Appointment.DTOs.Create;
+using Api.Appointment.DTOs.Return;
+
+public class AppointmentService : IAppointmentInterface
+{
+    private readonly IAppointmentInterfaceSql _appointmentSql;
+    public AppointmentService(IAppointmentInterfaceSql appointmentSql)
+    {
+        _appointmentSql = appointmentSql;
+    }
+
+    public async Task<Result<ReturnAppointmentDTOsimple>> CreateAppointment (CreateAppointmentDTO dto)
+    {
+        var model = new AppointmentModel(dto.Type, dto.DateAndTime, dto.Notes, dto.MaritalStatus, dto.PhysicalHealth, dto.HadTreatment, dto.Habits, dto.SearchReason, dto.PatientId, dto.PsychologistId);
+        var (success, id) = await _appointmentSql.CreateAppointmentSql(model);
+        //TODO: split model.DateAndTime to get: Month, Day and Hour.
+        if (success)
+        {
+            var appointmentReturn = new ReturnAppointmentDTOsimple(id, model.Type, 1, 2, 3, model.PatientId, model.PsychologistId);
+            var resultReturn = new Result<ReturnAppointmentDTOsimple>(true, appointmentReturn);  
+            return resultReturn;
+        }
+        var resultReturnError = new Result<ReturnAppointmentDTOsimple>(false, null);
+        return resultReturnError;
+    }
+}
