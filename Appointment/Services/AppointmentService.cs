@@ -20,9 +20,12 @@ public class AppointmentService : IAppointmentInterface
         var model = new AppointmentModel(dto.Type, dto.DateAndTime, dto.Notes, dto.MaritalStatus, dto.PhysicalHealth, dto.HadTreatment, dto.Habits, dto.SearchReason, dto.PatientId, dto.PsychologistId);
         var (success, id) = await _appointmentSql.CreateAppointmentSql(model);
         //TODO: split model.DateAndTime to get: Month, Day and Hour.
+        string[]? papoi;
+        string dateAndTime = model.Date.ToString();
+        papoi = dateAndTime.Split(new char[] {'/', ' ', '-', ':' }, StringSplitOptions.RemoveEmptyEntries);
         if (success)
         {
-            var appointmentReturn = new ReturnAppointmentDTOsimple(id, model.Type, 1, 2, 3, model.PatientId, model.PsychologistId);
+            var appointmentReturn = new ReturnAppointmentDTOsimple(id, model.Type, int.Parse(papoi[1]), int.Parse(papoi[0]), int.Parse(papoi[3]), model.PatientId, model.PsychologistId);
             var resultReturn = new Result<ReturnAppointmentDTOsimple>(true, appointmentReturn);  
             return resultReturn;
         }
