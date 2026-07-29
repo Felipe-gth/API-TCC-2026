@@ -23,6 +23,7 @@ public class AppointmentController : ControllerBase
         _appointment = appointment;
     }
 
+    [HttpPost]
     public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO dto)
     {
         var result = await _appointment.CreateAppointment(dto);
