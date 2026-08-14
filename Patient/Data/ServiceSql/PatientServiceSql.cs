@@ -73,11 +73,11 @@ public class PatientServiceSql : IPatientInterfaceSql
         return id;
     }
 
-    public async Task<ReturnUserDTO> GetPatientFromIdAsync(int id)
+    public async Task<ListPatientDTO> GetPatientFromIdAsync(int id)
     {
         using var connection = DBConnection.Connection();
 
-        var patient = connection.QueryFirst<ReturnUserDTO>("SELECT name, lastname, age, cpf, role FROM patient where id = @id",
+        var patient = connection.QueryFirst<ListPatientDTO>("SELECT id, name, lastname, age, cpf, role FROM patient where id = @id",
             new {id = id});
         if (patient != null)
         {
@@ -88,7 +88,7 @@ public class PatientServiceSql : IPatientInterfaceSql
     
     public async Task<IEnumerable<ListPatientDTO>> ListAllPatient(){
         var connection = DBConnection.Connection();
-        var listpcte = connection.Query<ListPatientDTO>("SELECT name, lastName, cpf, age, role FROM patient");
+        var listpcte = connection.Query<ListPatientDTO>("SELECT id, name, lastName, cpf, age, role FROM patient");
         //var listpcte = connection.Query<ListPatientDTO>("SELECT p.Name, p.lastName, p.cpf, ppn.number, ppn.countrycode, ppn.ddd FROM patient p INNER JOIN patient_phone_number ppn ON p.id = ppn.patient_id");
         return listpcte;
     }

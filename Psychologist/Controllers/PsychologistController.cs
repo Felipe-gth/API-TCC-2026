@@ -18,7 +18,7 @@ public class PsychologistController : ControllerBase
         _psychologist = psychologist;
     }
 
-    [Authorize(Roles = "A")]
+    //[Authorize(Roles = "A")]
     [HttpGet("list")]
     public async Task<IActionResult> ListPsychologist()
     {

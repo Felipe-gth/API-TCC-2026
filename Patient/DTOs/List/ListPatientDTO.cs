@@ -2,6 +2,7 @@ namespace Api.Patient.DTOs.List;
 
 public class ListPatientDTO
 {
+    public int Id {get; set; }
     public string Name { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string CPF { get; set; } = string.Empty;

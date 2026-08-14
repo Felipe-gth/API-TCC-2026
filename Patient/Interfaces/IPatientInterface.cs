@@ -16,6 +16,6 @@ namespace Api.Patient.Interfaces;
 public interface IPatientInterface
 {
     Task<Result<ReturnUserDTO>> CreatePatientAsync(RegisterPatientDTO dto);
-    Task<Result<ReturnUserDTO>> GetPatientByIdAsync(int id);
+    Task<Result<ListPatientDTO>> GetPatientByIdAsync(int id);
     Task<Result<IEnumerable<ListPatientDTO>>> ListPatient();
 }

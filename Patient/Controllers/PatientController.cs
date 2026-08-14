@@ -37,7 +37,7 @@ public class PatientController : ControllerBase
         }
     }
     
-    [Authorize(Roles = "P")]
+    //[Authorize(Roles = "P")]
     [HttpGet("get-by-id/{id}")]
     public async Task<IActionResult> GetPatientById(int id)
     {

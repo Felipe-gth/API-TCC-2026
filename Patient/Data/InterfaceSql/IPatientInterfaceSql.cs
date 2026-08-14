@@ -13,7 +13,7 @@ public interface IPatientInterfaceSql
     Task<int> CreateAddressAsync(AddressModel adress);
     Task<int> CreatePhoneNumberAsync(NumberModel number);
     Task<int> CreateEmailAsync(EmailModel email);
-    Task<ReturnUserDTO> GetPatientFromIdAsync(int id);
+    Task<ListPatientDTO> GetPatientFromIdAsync(int id);
     Task<IEnumerable<ListPatientDTO>> ListAllPatient();
     Task<bool> EditPatientAsync(UserModel user);
 

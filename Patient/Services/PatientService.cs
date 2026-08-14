@@ -53,18 +53,18 @@ public class PatientService : IPatientInterface
 
     
 
-    public async Task<Result<ReturnUserDTO>> GetPatientByIdAsync(int id)
+    public async Task<Result<ListPatientDTO>> GetPatientByIdAsync(int id)
     {
         var patient = await _patientSQL.GetPatientFromIdAsync(id);
         if (patient != null)
         {
-            return new Result<ReturnUserDTO>
+            return new Result<ListPatientDTO>
             {
                 Success = true,
                 Data = patient
             };
         }
-        return new Result<ReturnUserDTO>
+        return new Result<ListPatientDTO>
         {
             Success = false,
             Data = null
