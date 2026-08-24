@@ -23,7 +23,7 @@ public class AppointmentController : ControllerBase
         _appointment = appointment;
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO dto)
     {
         var result = await _appointment.CreateAppointment(dto);
@@ -33,5 +33,24 @@ public class AppointmentController : ControllerBase
         }
         return BadRequest();
         
+    }
+
+    //[Authorize(Roles = "P,A")]
+    [HttpGet("get-by-id/{id}")]
+    public async Task<IActionResult> GetAppointmentById(int id)
+    {
+        try
+        {
+            var result = await _appointment.GetAppointmentById(id);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }

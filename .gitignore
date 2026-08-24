@@ -2,6 +2,7 @@
 obj/
 out/
 publish/
+database/
 
 *.user
 *.rsuser

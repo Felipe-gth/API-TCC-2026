@@ -16,5 +16,22 @@ public class ReturnAppointmentDTOextend
     public string SearchReason {get; set;}
     public int PatientId {get; set;}
     public int PsychologistId { get; set;}
+
+    public ReturnAppointmentDTOextend(int id, string type, int day, int month, int hour, string? notes, string? maritalStatus, string? physicalHealth, string? hadTreatment, string? habits, string? searchReason, int patientId, int psychologistId)
+    {
+        Id = id;
+        Type = type;
+        Day = day;
+        Month = month;
+        Hour = hour;
+        Notes = notes;
+        MaritalStatus = maritalStatus;
+        PhysicalHealth = physicalHealth;
+        HadTreatment = hadTreatment;
+        Habits = habits;
+        SearchReason = searchReason;
+        PatientId = patientId;
+        PsychologistId = psychologistId;
+    }
 }
 

@@ -31,4 +31,15 @@ public class AppointmentServieSql : IAppointmentInterfaceSql
 
         return (success: id > 0, id: id);
     }
+
+    public async Task<(bool, AppointmentModel)> GetAppointmentByIdSql (int id)
+    {
+        using var connection = DBConnection.Connection();
+
+        var sql = @"SELECT id, type, dateTime AS date, notes, hadTreatment, physicalHealth, maritalStatus, habits, searchReason, patient_id AS patientId, psychologist_id AS psychologistId FROM appointment WHERE id = @id";
+
+        var appointment = await connection.QuerySingleOrDefaultAsync<AppointmentModel>(sql, new { id });
+
+        return (success: appointment != null, appointment: appointment);
+    }
 }
