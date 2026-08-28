@@ -52,5 +52,6 @@ public class AppointmentController : ControllerBase
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
+        
     }
 }
