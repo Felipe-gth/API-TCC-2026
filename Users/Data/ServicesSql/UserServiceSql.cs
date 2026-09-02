@@ -20,44 +20,47 @@ public class UserServiceSql : IUserSql
         var patient = connection.QueryFirstOrDefault<string>("SELECT password FROM patient WHERE cpf = @cpf",
             new {cpf = user.CPF});
 
-
-        try
+        if(!string.IsNullOrEmpty(patient) && VerifyPassword(user.Password, patient))
         {
-            if(!string.IsNullOrEmpty(patient) && BCrypt.Net.BCrypt.Verify(user.Password, patient))
-            {
-                return (true, "C");
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error verifying patient password. Hash length: {patient?.Length ?? 0}. Hash value: {patient}. Error: {ex.Message}");
+            await RehashPasswordIfLegacyAsync("patient", user.CPF, user.Password, patient);
+            return (true, "C");
         }
 
-        try
+        if(!string.IsNullOrEmpty(psi) && VerifyPassword(user.Password, psi))
         {
-            if(!string.IsNullOrEmpty(psi) && BCrypt.Net.BCrypt.Verify(user.Password, psi))
-            {
-                return (true, "P");
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error verifying psychologist password. Hash length: {psi?.Length ?? 0}. Hash value: {psi}. Error: {ex.Message}");
+            await RehashPasswordIfLegacyAsync("psychologist", user.CPF, user.Password, psi);
+            return (true, "P");
         }
 
-        try
+        if(!string.IsNullOrEmpty(adm) && VerifyPassword(user.Password, adm))
         {
-            if(!string.IsNullOrEmpty(adm) && BCrypt.Net.BCrypt.Verify(user.Password, adm))
-            {
-                return (true, "A");
-            }
+            await RehashPasswordIfLegacyAsync("admin", user.CPF, user.Password, adm);
+            return (true, "A");
         }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error verifying admin password. Hash length: {adm?.Length ?? 0}. Hash value: {adm}. Error: {ex.Message}");
-        }
-        
+
         return (false, "");
+    }
+
+    private static bool VerifyPassword(string provided, string stored)
+    {
+        if (string.IsNullOrEmpty(stored))
+            return false;
+
+        if (stored.StartsWith("$2"))
+            return BCrypt.Net.BCrypt.Verify(provided, stored);
+
+        // Legacy plaintext fallback (seed/imported data), e.g. "senha123"
+        return string.Equals(provided, stored, StringComparison.Ordinal);
+    }
+
+    private async Task RehashPasswordIfLegacyAsync(string table, string cpf, string password, string stored)
+    {
+        if (string.IsNullOrEmpty(stored) || stored.StartsWith("$2"))
+            return;
+
+        using var connection = DBConnection.Connection();
+        var hash = BCrypt.Net.BCrypt.HashPassword(password);
+        await connection.ExecuteAsync($"UPDATE {table} SET password = @hash WHERE cpf = @cpf;", new { hash, cpf });
     }
     public async Task<int> GetId(string cpf, string Role)
     {

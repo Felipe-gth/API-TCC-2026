@@ -11,6 +11,7 @@ public class AppointmentModel
     public string? HadTreatment {get; private set; }
     public string? Habits {get; private set; }
     public string? SearchReason {get; private set; }
+    public string? Status { get; private set; }
     public int PatientId { get; private set; }
     public int PsychologistId { get; private set; }
 

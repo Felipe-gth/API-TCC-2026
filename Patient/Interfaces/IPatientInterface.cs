@@ -15,7 +15,9 @@ namespace Api.Patient.Interfaces;
 
 public interface IPatientInterface
 {
-    Task<Result<ReturnUserDTO>> CreatePatientAsync(RegisterPatientDTO dto);
+    Task<Result<ListPatientDTO>> CreatePatientAsync(RegisterPatientDTO dto);
     Task<Result<ListPatientDTO>> GetPatientByIdAsync(int id);
     Task<Result<IEnumerable<ListPatientDTO>>> ListPatient();
+    Task<Result<bool>> LinkPatientToPsychologist(LinkPatientPsychologistDTO dto);
+    Task<Result<ReturnPatientPsychologistDTO>> GetPatientPsychologist(int patientId);
 }

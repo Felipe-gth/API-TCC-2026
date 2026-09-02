@@ -1,5 +1,5 @@
 namespace Api.Appointment.DTOs.List;
-using Api.Appointment.DTos;
+using Api.Appointment.DTOs;
 
 public class ReturnAvailabilityDTO
 {
@@ -7,5 +7,5 @@ public class ReturnAvailabilityDTO
     public DateOnly Date {get; set;}
     public int WeekDay {get; set;}
     public bool Avaliability {get; set;}
-    public List<HourAvailabilityDTO> Hours = new();
+    public List<HourAvailabilityDTO> Hours { get; set; } = new();
 }

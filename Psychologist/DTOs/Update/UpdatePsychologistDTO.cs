@@ -10,8 +10,8 @@ public class UpdatePsychologistDTO : UserModelDTO
     public int Id { get; set; }
 
     [Required(ErrorMessage = "CRP is required")]
-    [MinLength(7, ErrorMessage = "CRP required 7 characters")]
-    [MaxLength(7, ErrorMessage = "CRP required 7 characters")]
+    [MinLength(8, ErrorMessage = "CRP required 8 characters")]
+    [MaxLength(8, ErrorMessage = "CRP required 8 characters")]
     public string CRP { get; set; }
 
     [Required(ErrorMessage = "Specialization is required")]

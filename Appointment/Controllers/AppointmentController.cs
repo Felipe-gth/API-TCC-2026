@@ -1,5 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 using Api.Appointment.DTOs.Create;
+using Api.Appointment.DTOs.Update;
 using Api.Appointment.Interface;
 using Api.Patient.DTOs.Edit;
 using Api.Patient.DTOs.Register;
@@ -23,6 +24,7 @@ public class AppointmentController : ControllerBase
         _appointment = appointment;
     }
 
+    [Authorize(Roles = "C,P,A")]
     [HttpPost("Create")]
     public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDTO dto)
     {
@@ -35,7 +37,7 @@ public class AppointmentController : ControllerBase
         
     }
 
-    //[Authorize(Roles = "P,A")]
+    [Authorize(Roles = "P,A")]
     [HttpGet("get-by-id/{id}")]
     public async Task<IActionResult> GetAppointmentById(int id)
     {
@@ -53,5 +55,62 @@ public class AppointmentController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
         
+    }
+
+    [Authorize(Roles = "C,P,A")]
+    [HttpGet("availability/{psychologistId}")]
+    public async Task<IActionResult> GetAvailabilityByDate(int psychologistId, [FromQuery] DateOnly date)
+    {
+        try
+        {
+            var result = await _appointment.GetAvailabilityByDate(psychologistId, date);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [Authorize(Roles = "P")]
+    [HttpPost("availability")]
+    public async Task<IActionResult> CreateAvailabilityDays([FromBody] CreateServiceDaysDTO dto)
+    {
+        try
+        {
+            var result = await _appointment.CreateAvailabilityDays(dto);
+            if (result.Success && result.Data)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [Authorize(Roles = "P,A")]
+    [HttpPut("status")]
+    public async Task<IActionResult> UpdateAppointmentStatus([FromBody] EntryUpdateAppointmentStatusDTO dto)
+    {
+        try
+        {
+            var result = await _appointment.UpdateAppointmentStatus(dto);
+            if (result.Success && result.Data)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }

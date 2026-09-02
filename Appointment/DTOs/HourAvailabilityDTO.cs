@@ -1,4 +1,4 @@
-namespace Api.Appointment.DTos;
+namespace Api.Appointment.DTOs;
 
 public class HourAvailabilityDTO
 {

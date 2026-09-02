@@ -26,13 +26,13 @@ public class PatientService : IPatientInterface
 
     //Register
 
-    public async Task<Result<ReturnUserDTO>> CreatePatientAsync(RegisterPatientDTO dto)
+    public async Task<Result<ListPatientDTO>> CreatePatientAsync(RegisterPatientDTO dto)
     {
         var user = new UserModel(0, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
         int data = await _patientSQL.CreatePatientAsync(user);
         if (data <= 0)
         {
-            var result = new Result<ReturnUserDTO>
+            var result = new Result<ListPatientDTO>
             {
                 Success = false,
                 Data = null
@@ -40,11 +40,23 @@ public class PatientService : IPatientInterface
             };
             return result;
         }
-        var returndto = new ReturnUserDTO(data, "", "C");
-        return new Result<ReturnUserDTO>
+        var created = await _patientSQL.GetPatientFromIdAsync(data);
+        if (created == null)
+        {
+            created = new ListPatientDTO
+            {
+                Id = data,
+                Name = dto.Name,
+                LastName = dto.LastName,
+                CPF = dto.CPF,
+                Age = dto.Age,
+                Role = "C"
+            };
+        }
+        return new Result<ListPatientDTO>
         {
             Success = true,
-            Data = returndto
+            Data = created
         };
     }
 
@@ -74,24 +86,19 @@ public class PatientService : IPatientInterface
     public async Task<Result<IEnumerable<ListPatientDTO>>> ListPatient()
     {
         var result = await _patientSQL.ListAllPatient();
-        if (result != null && result.Any())
+        if (result != null)
         {
-            var a = new Result<IEnumerable<ListPatientDTO>>
+            return new Result<IEnumerable<ListPatientDTO>>
             {
                 Success = true,
                 Data = result
             };
-            return a;
         }
-        else
+        return new Result<IEnumerable<ListPatientDTO>>
         {
-            var a = new Result<IEnumerable<ListPatientDTO>>
-            {
-                Success = false,
-                Data = null
-            };
-            return a;
-        }
+            Success = false,
+            Data = null
+        };
     }
     
     public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto)
@@ -111,5 +118,21 @@ public class PatientService : IPatientInterface
             Success = false,
             Data = false
         };
+    }
+
+    public async Task<Result<bool>> LinkPatientToPsychologist(LinkPatientPsychologistDTO dto)
+    {
+        var ok = await _patientSQL.LinkPatientToPsychologistSql(dto.PatientId, dto.PsychologistId);
+        return new Result<bool>(ok, ok);
+    }
+
+    public async Task<Result<ReturnPatientPsychologistDTO>> GetPatientPsychologist(int patientId)
+    {
+        var psychologist = await _patientSQL.GetActivePsychologistSql(patientId);
+        if (psychologist != null)
+        {
+            return new Result<ReturnPatientPsychologistDTO>(true, psychologist);
+        }
+        return new Result<ReturnPatientPsychologistDTO>(false, null);
     }
 }

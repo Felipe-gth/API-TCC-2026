@@ -60,4 +60,55 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
         );
         return updated;
     }
+
+    public async Task<ListPsychologistDTO> GetPsychologistById(int id)
+    {
+        using var connection = DBConnection.Connection();
+
+        var result = await connection.QuerySingleOrDefaultAsync<ListPsychologistDTO>(
+            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE id = @id",
+            new { id });
+
+        return result;
+    }
+
+    public async Task<bool> DeletePsychologist(int id)
+    {
+        using var connection = DBConnection.Connection();
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            await connection.ExecuteAsync(
+                "DELETE FROM patient_psychologist WHERE psychologist_id = @id;",
+                new { id }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM psychologist_address WHERE psychologist_id = @id;",
+                new { id }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM psychologist_email WHERE psychologist_id = @id;",
+                new { id }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM psychologist_phone_number WHERE psychologist_id = @id;",
+                new { id }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM avaliable_time WHERE serviceDay_id IN (SELECT id FROM service_days WHERE psychologist_id = @id);",
+                new { id }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM service_days WHERE psychologist_id = @id;",
+                new { id }, transaction);
+
+            var rows = await connection.ExecuteAsync(
+                "DELETE FROM psychologist WHERE id = @id;",
+                new { id }, transaction);
+
+            transaction.Commit();
+            return rows > 0;
+        }
+        catch
+        {
+            transaction.Rollback();
+            return false;
+        }
+    }
 }

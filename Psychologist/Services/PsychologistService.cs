@@ -4,7 +4,6 @@ using Api.Psychologist.DTOs.List;
 using Api.Psychologist.DTOs.Register;
 using Api.Shared.DTOs.Result;
 using Api.Psychologist.Models;
-using Api.User.DTOs.Return;
 using Api.Psychologist.Interfaces;
 
 
@@ -20,49 +19,38 @@ public class PsychologistService : IPsychologistInterface
     public async Task<Result<IEnumerable<ListPsychologistDTO>>> ListPsychologist()
     {
         var result = await _psychologistSQL.ListPsychologist();
-        if (result != null && result.Any())
+        if (result != null)
         {
-            var a = new Result<IEnumerable<ListPsychologistDTO>>
+            return new Result<IEnumerable<ListPsychologistDTO>>
             {
                 Success = true,
                 Data = result
             };
-            return a;
         }
-        else
+        return new Result<IEnumerable<ListPsychologistDTO>>
         {
-            var a = new Result<IEnumerable<ListPsychologistDTO>>
-            {
-                Success = false,
-                Data = null
-            };
-            return a;
-        }
-        
+            Success = false,
+            Data = null
+        };
     }
 
-    public async Task<Result<ReturnUserDTO>> RegisterPsychologist(RegisterPsychologistDTO dto)
+    public async Task<Result<ListPsychologistDTO>> RegisterPsychologist(RegisterPsychologistDTO dto)
     {
         var psychologist = new PsychologistModel(0, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, dto.Specialization, dto.CRP);
         int result = await _psychologistSQL.RegisterPsychologist(psychologist);
         if (result != 0)
         {
-            var a = new Result<ReturnUserDTO>
+            return new Result<ListPsychologistDTO>
             {
                 Success = true,
-                Data = new ReturnUserDTO(result, "", "P")
+                Data = new ListPsychologistDTO(result, dto.Name, dto.LastName, dto.CPF, dto.CRP, dto.Specialization)
             };
-            return a;
         }
-        else
+        return new Result<ListPsychologistDTO>
         {
-            var a = new Result<ReturnUserDTO>
-            {
-                Success = false,
-                Data = null
-            };
-            return a;
-        }
+            Success = false,
+            Data = null
+        };
     }
 
     public async Task<Result<bool>> EditPsychologist(UpdatePsychologistDTO dto)
@@ -80,8 +68,32 @@ public class PsychologistService : IPsychologistInterface
 
         return new Result<bool>
         {
-            Success = true,
-            Data = true
+            Success = false,
+            Data = false
         };
+    }
+
+    public async Task<Result<ListPsychologistDTO>> GetPsychologistById(int id)
+    {
+        var psychologist = await _psychologistSQL.GetPsychologistById(id);
+        if (psychologist != null)
+        {
+            return new Result<ListPsychologistDTO>
+            {
+                Success = true,
+                Data = psychologist
+            };
+        }
+        return new Result<ListPsychologistDTO>
+        {
+            Success = false,
+            Data = null
+        };
+    }
+
+    public async Task<Result<bool>> DeletePsychologist(int id)
+    {
+        bool deleted = await _psychologistSQL.DeletePsychologist(id);
+        return new Result<bool>(deleted, deleted);
     }
 }

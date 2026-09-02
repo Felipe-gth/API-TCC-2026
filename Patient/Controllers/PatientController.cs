@@ -18,7 +18,7 @@ public class PatientController : ControllerBase
     {
         _patient = patient;
     }
-    //[Authorize(Roles = "P")]
+    [Authorize(Roles = "P,A")]
     [HttpPost("createPatient")]
     public async Task<IActionResult> CreatePatient([FromBody] RegisterPatientDTO dto)
     {
@@ -37,7 +37,7 @@ public class PatientController : ControllerBase
         }
     }
     
-    //[Authorize(Roles = "P")]
+    [Authorize(Roles = "C,P,A")]
     [HttpGet("get-by-id/{id}")]
     public async Task<IActionResult> GetPatientById(int id)
     {
@@ -48,14 +48,14 @@ public class PatientController : ControllerBase
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return NotFound(result);
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    //[Authorize(Roles = "P,A")]
+    [Authorize(Roles = "P,A")]
     [HttpGet("list")]
     public async Task<IActionResult> ListPatient()
     {
@@ -67,6 +67,44 @@ public class PatientController : ControllerBase
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+    
+    [Authorize(Roles = "A,P")]
+    [HttpPost("link-psychologist")]
+    public async Task<IActionResult> LinkPatientToPsychologist([FromBody] LinkPatientPsychologistDTO dto)
+    {
+        try
+        {
+            var result = await _patient.LinkPatientToPsychologist(dto);
+            if (result.Success && result.Data)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [Authorize(Roles = "C,P,A")]
+    [HttpGet("{patientId}/psychologist")]
+    public async Task<IActionResult> GetPatientPsychologist(int patientId)
+    {
+        try
+        {
+            var result = await _patient.GetPatientPsychologist(patientId);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
         }
         catch (Exception ex)
         {
