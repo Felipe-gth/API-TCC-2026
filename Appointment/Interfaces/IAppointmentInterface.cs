@@ -11,4 +11,7 @@ public interface IAppointmentInterface{
     Task<Result<ReturnAvailabilityDTO>> GetAvailabilityByDate (int psychologistId, DateOnly date);
     Task<Result<bool>> CreateAvailabilityDays (CreateServiceDaysDTO dto);
     Task<Result<bool>> UpdateAppointmentStatus (EntryUpdateAppointmentStatusDTO dto);
+    Task<Result<List<string>>> GetPatientAgenda (int patientId);
+    Task<Result<List<ReturnAppointmentListDTO>>> GetPatientAppointments (int patientId);
+    Task<Result<List<ReturnAppointmentListDTO>>> GetPsychologistAppointments (int psychologistId);
 }

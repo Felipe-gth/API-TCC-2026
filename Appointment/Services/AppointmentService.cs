@@ -21,9 +21,20 @@ public class AppointmentService : IAppointmentInterface
 
     public async Task<Result<ReturnAppointmentDTOsimple>> CreateAppointment (CreateAppointmentDTO dto)
     {
+        var now = DateTime.Now;
+        if (dto.DateAndTime.Date < now.Date)
+            return new Result<ReturnAppointmentDTOsimple>(false, null) { Message = "DATA_PASSADA" };
+
+        if (dto.DateAndTime.Date == now.Date && dto.DateAndTime.TimeOfDay < now.TimeOfDay)
+            return new Result<ReturnAppointmentDTOsimple>(false, null) { Message = "HORARIO_PASSADO" };
+
+        var hasAppointment = await _appointmentSql.PatientHasAppointmentOnDateSql(dto.PatientId, dto.DateAndTime);
+        if (hasAppointment)
+            return new Result<ReturnAppointmentDTOsimple>(false, null) { Message = "JA_TEM_CONSULTA" };
+
         var (available, reason) = await _appointmentSql.ValidateAppointmentSlotSql(dto.PsychologistId, dto.DateAndTime);
         if (!available)
-            return new Result<ReturnAppointmentDTOsimple>(false, null);
+            return new Result<ReturnAppointmentDTOsimple>(false, null) { Message = "SLOT_INDISPONIVEL" };
 
         var model = new AppointmentModel(dto.Type, dto.DateAndTime, dto.Notes, dto.MaritalStatus, dto.PhysicalHealth, dto.HadTreatment, dto.Habits, dto.SearchReason, dto.PatientId, dto.PsychologistId);
         var (success, id) = await _appointmentSql.CreateAppointmentSql(model);
@@ -81,7 +92,14 @@ public class AppointmentService : IAppointmentInterface
 
         var template = (await _appointmentSql.GetTemplateHours(psychologistId, weekDay)).ToHashSet();
         if (template.Count == 0)
-            return new Result<ReturnAvailabilityDTO>(true, null);
+            return new Result<ReturnAvailabilityDTO>(true, new ReturnAvailabilityDTO
+            {
+                PsychologistId = psychologistId,
+                Date = date,
+                WeekDay = weekDay,
+                Avaliability = false,
+                Hours = new List<HourAvailabilityDTO>()
+            });
 
         var taken = await _appointmentSql.GetTakenHours(psychologistId, start, end);
 
@@ -114,5 +132,23 @@ public class AppointmentService : IAppointmentInterface
 
         var (success, updated) = await _appointmentSql.UpdateAppointmentStatusSql(dto.Id, status);
         return new Result<bool>(success, updated);
+    }
+
+    public async Task<Result<List<string>>> GetPatientAgenda (int patientId)
+    {
+        var dates = await _appointmentSql.GetPatientAppointmentDatesSql(patientId);
+        return new Result<List<string>>(true, dates.ToList());
+    }
+
+    public async Task<Result<List<ReturnAppointmentListDTO>>> GetPatientAppointments (int patientId)
+    {
+        var appointments = await _appointmentSql.GetAppointmentsByPatientSql(patientId);
+        return new Result<List<ReturnAppointmentListDTO>>(true, appointments.ToList());
+    }
+
+    public async Task<Result<List<ReturnAppointmentListDTO>>> GetPsychologistAppointments (int psychologistId)
+    {
+        var appointments = await _appointmentSql.GetAppointmentsByPsychologistSql(psychologistId);
+        return new Result<List<ReturnAppointmentListDTO>>(true, appointments.ToList());
     }
 } 

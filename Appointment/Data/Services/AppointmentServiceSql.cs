@@ -90,6 +90,14 @@ public class AppointmentServieSql : IAppointmentInterfaceSql
 
         try
         {
+            // Replace the psychologist's previous availability with the new set.
+            await connection.ExecuteAsync(
+                "DELETE FROM avaliable_time WHERE serviceDay_id IN (SELECT id FROM service_days WHERE psychologist_id = @psychologistId);",
+                new { psychologistId }, transaction);
+            await connection.ExecuteAsync(
+                "DELETE FROM service_days WHERE psychologist_id = @psychologistId;",
+                new { psychologistId }, transaction);
+
             foreach (var group in slots.GroupBy(s => s.weekDay))
             {
                 var serviceDayId = await connection.QuerySingleAsync<int>(
@@ -150,5 +158,81 @@ public class AppointmentServieSql : IAppointmentInterfaceSql
             return (available: false, reason: "occupied");
 
         return (available: true, reason: "");
+    }
+
+    public async Task<bool> PatientHasAppointmentOnDateSql (int patientId, DateTime dateTime)
+    {
+        using var connection = DBConnection.Connection();
+
+        var start = dateTime.Date;
+        var end = start.AddDays(1);
+
+        var count = await connection.ExecuteScalarAsync<int>(
+            @"SELECT COUNT(*)
+              FROM appointment
+              WHERE patient_id = @patientId
+                AND dateTime >= @start
+                AND dateTime <  @end;",
+            new { patientId, start, end });
+
+        return count > 0;
+    }
+
+    public async Task<IEnumerable<string>> GetPatientAppointmentDatesSql (int patientId)
+    {
+        using var connection = DBConnection.Connection();
+
+        var sql = @"SELECT DISTINCT DATE_FORMAT(dateTime, '%Y-%m-%d') AS date
+                    FROM appointment
+                    WHERE patient_id = @patientId
+                    ORDER BY date;";
+
+        return await connection.QueryAsync<string>(sql, new { patientId });
+    }
+
+    public async Task<IEnumerable<Api.Appointment.DTOs.Return.ReturnAppointmentListDTO>> GetAppointmentsByPatientSql (int patientId)
+    {
+        using var connection = DBConnection.Connection();
+
+        var sql = @"SELECT a.id,
+                           a.type,
+                           a.dateTime AS Date,
+                           a.status,
+                           a.patient_id AS PatientId,
+                           a.psychologist_id AS PsychologistId,
+                           pa.name AS PatientName,
+                           pa.lastName AS PatientLastName,
+                           ps.name AS PsychologistName,
+                           ps.lastName AS PsychologistLastName
+                    FROM appointment a
+                    JOIN patient pa ON pa.id = a.patient_id
+                    JOIN psychologist ps ON ps.id = a.psychologist_id
+                    WHERE a.patient_id = @patientId
+                    ORDER BY a.dateTime DESC;";
+
+        return await connection.QueryAsync<Api.Appointment.DTOs.Return.ReturnAppointmentListDTO>(sql, new { patientId });
+    }
+
+    public async Task<IEnumerable<Api.Appointment.DTOs.Return.ReturnAppointmentListDTO>> GetAppointmentsByPsychologistSql (int psychologistId)
+    {
+        using var connection = DBConnection.Connection();
+
+        var sql = @"SELECT a.id,
+                           a.type,
+                           a.dateTime AS Date,
+                           a.status,
+                           a.patient_id AS PatientId,
+                           a.psychologist_id AS PsychologistId,
+                           pa.name AS PatientName,
+                           pa.lastName AS PatientLastName,
+                           ps.name AS PsychologistName,
+                           ps.lastName AS PsychologistLastName
+                    FROM appointment a
+                    JOIN patient pa ON pa.id = a.patient_id
+                    JOIN psychologist ps ON ps.id = a.psychologist_id
+                    WHERE a.psychologist_id = @psychologistId
+                    ORDER BY a.dateTime DESC;";
+
+        return await connection.QueryAsync<Api.Appointment.DTOs.Return.ReturnAppointmentListDTO>(sql, new { psychologistId });
     }
 }

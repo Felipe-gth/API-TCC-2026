@@ -88,6 +88,18 @@ public class PatientServiceSql : IPatientInterfaceSql
         return listpcte;
     }
 
+    public async Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId){
+        using var connection = DBConnection.Connection();
+        var listpcte = await connection.QueryAsync<ListPatientDTO>(
+            @"SELECT p.id, p.name, p.lastName, p.cpf, p.age, UPPER(p.role) AS role
+              FROM patient_psychologist pp
+              JOIN patient p ON p.id = pp.patient_id
+              WHERE pp.psychologist_id = @psychologistId
+                AND pp.active = 1;",
+            new { psychologistId });
+        return listpcte;
+    }
+
     public async Task<bool> EditPatientAsync(UserModel user)
     {
         using var connection = DBConnection.Connection();

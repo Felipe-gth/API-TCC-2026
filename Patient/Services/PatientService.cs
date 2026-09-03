@@ -83,9 +83,12 @@ public class PatientService : IPatientInterface
         };
     }
 
-    public async Task<Result<IEnumerable<ListPatientDTO>>> ListPatient()
+    public async Task<Result<IEnumerable<ListPatientDTO>>> ListPatient(int? psychologistId = null)
     {
-        var result = await _patientSQL.ListAllPatient();
+        var result = psychologistId.HasValue
+            ? await _patientSQL.ListPatientsByPsychologist(psychologistId.Value)
+            : await _patientSQL.ListAllPatient();
+
         if (result != null)
         {
             return new Result<IEnumerable<ListPatientDTO>>

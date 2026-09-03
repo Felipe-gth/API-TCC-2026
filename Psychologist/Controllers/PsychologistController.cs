@@ -6,7 +6,7 @@ using Api.Psychologist.Interfaces;
 
 namespace Api.Psychologist.Controllers;
 
-[Authorize(Roles = "A")]
+//[Authorize(Roles = "A")]
 [ApiController]
 [Route("api/[controller]")]
 
@@ -72,7 +72,7 @@ public class PsychologistController : ControllerBase
             }
             else
             {
-                return BadRequest(result);
+                return NotFound(result);
             }
         }
         catch (Exception ex)

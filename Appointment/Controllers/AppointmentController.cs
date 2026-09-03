@@ -33,8 +33,7 @@ public class AppointmentController : ControllerBase
         {
             return Ok(result);
         }
-        return BadRequest();
-        
+        return BadRequest(result);
     }
 
     [Authorize(Roles = "P,A")]
@@ -95,7 +94,64 @@ public class AppointmentController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "C,P,A")]
+    [HttpGet("patient-agenda/{patientId}")]
+    public async Task<IActionResult> GetPatientAgenda(int patientId)
+    {
+        try
+        {
+            var result = await _appointment.GetPatientAgenda(patientId);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [Authorize(Roles = "C,P,A")]
+    [HttpGet("patient/{patientId}")]
+    public async Task<IActionResult> GetPatientAppointments(int patientId)
+    {
+        try
+        {
+            var result = await _appointment.GetPatientAppointments(patientId);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
     [Authorize(Roles = "P,A")]
+    [HttpGet("psychologist/{psychologistId}")]
+    public async Task<IActionResult> GetPsychologistAppointments(int psychologistId)
+    {
+        try
+        {
+            var result = await _appointment.GetPsychologistAppointments(psychologistId);
+            if (result.Data != null)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [Authorize(Roles = "C,P,A")]
     [HttpPut("status")]
     public async Task<IActionResult> UpdateAppointmentStatus([FromBody] EntryUpdateAppointmentStatusDTO dto)
     {

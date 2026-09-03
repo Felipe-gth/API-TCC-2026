@@ -57,11 +57,11 @@ public class PatientController : ControllerBase
     }
     [Authorize(Roles = "P,A")]
     [HttpGet("list")]
-    public async Task<IActionResult> ListPatient()
+    public async Task<IActionResult> ListPatient([FromQuery] int? psychologistId = null)
     {
         try
         {
-            var result = await _patient.ListPatient();
+            var result = await _patient.ListPatient(psychologistId);
             if (result.Data != null)
             {
                 return Ok(result);

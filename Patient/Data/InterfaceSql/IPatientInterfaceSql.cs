@@ -15,6 +15,7 @@ public interface IPatientInterfaceSql
     Task<int> CreateEmailAsync(EmailModel email);
     Task<ListPatientDTO> GetPatientFromIdAsync(int id);
     Task<IEnumerable<ListPatientDTO>> ListAllPatient();
+    Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId);
     Task<bool> EditPatientAsync(UserModel user);
     Task<bool> LinkPatientToPsychologistSql (int patientId, int psychologistId);
     Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql (int patientId);

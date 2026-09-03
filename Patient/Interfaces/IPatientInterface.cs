@@ -17,7 +17,7 @@ public interface IPatientInterface
 {
     Task<Result<ListPatientDTO>> CreatePatientAsync(RegisterPatientDTO dto);
     Task<Result<ListPatientDTO>> GetPatientByIdAsync(int id);
-    Task<Result<IEnumerable<ListPatientDTO>>> ListPatient();
+    Task<Result<IEnumerable<ListPatientDTO>>> ListPatient(int? psychologistId = null);
     Task<Result<bool>> LinkPatientToPsychologist(LinkPatientPsychologistDTO dto);
     Task<Result<ReturnPatientPsychologistDTO>> GetPatientPsychologist(int patientId);
 }
