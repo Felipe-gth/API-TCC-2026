@@ -3,6 +3,8 @@ obj/
 out/
 publish/
 database/
+appsettings.json
+
 
 *.user
 *.rsuser
