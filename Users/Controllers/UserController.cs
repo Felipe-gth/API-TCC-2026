@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Api.User.Interfaces;
 using Api.User.DTOs.Email;
 using Microsoft.AspNetCore.Authorization;
+using Api.User.DTOs.Delet;
 using Api.User.DTOs.Phone;
+
 
 namespace Api.User.Controllers;
 
@@ -108,6 +110,23 @@ public class UserController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    
 
+    [Authorize]
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeletUserAsync([FromBody] DeletUserDTO dto)
+    {
+        try
+        {
+            var result = await _userService.DeletUserAsync(dto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
 }

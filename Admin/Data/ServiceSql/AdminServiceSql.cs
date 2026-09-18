@@ -3,6 +3,7 @@ using Api.Admin.Data.InterfaceSql;
 using Api.Admin.Models;
 using Dapper;
 using Properties;
+using Api.Admin.DTOs.Return;
 using BCrypt.Net;
 using System.Threading.Tasks;
 using System;
@@ -32,5 +33,17 @@ public class AdminServiceSql : IAdminInterfaceSql
         );
 
         return id;
+    }
+
+    public async Task<ReturnAdminData> GetAdminByIdAsync(int id)
+    {
+        using var connection = DBConnection.Connection();
+
+        var adminData = await connection.QuerySingleOrDefaultAsync<ReturnAdminData>(
+            @"SELECT id, name, cpf FROM admin WHERE id = @id",
+            new { id }
+        );
+
+        return adminData;
     }
 }

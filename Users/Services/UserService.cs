@@ -8,6 +8,12 @@ using Api.User.DTOs.Login;
 using Api.User.Models;
 using Api.User.DTOs.Phone;
 using Api.User.DTOs.Email;
+using Api.User.DTOs.Delet;
+using System.IdentityModel.Tokens.Jwt;
+using Api.Psychologist.Data.InterfaceSql;
+using Api.Admin.Data.ServiceSql;
+using Api.Admin.Data.InterfaceSql;
+
 
 
 namespace Api.User.Services;
@@ -16,11 +22,15 @@ public class UserService : IUserInterface
 
 {
     private readonly IUserSql _userSql;
+    private readonly IAdminInterfaceSql _adminSql;
+    private readonly IPsychologistInterfaceSql _psychologistSql;
     private readonly IAuthInterface _auth;
-    public UserService(IUserSql user, IAuthInterface auth)
+    public UserService(IUserSql user, IAuthInterface auth, IPsychologistInterfaceSql psychologist, IAdminInterfaceSql admin)
     {
         _userSql = user;
         _auth = auth;
+        _psychologistSql = psychologist;
+        _adminSql = admin;
     }
 
 
@@ -113,6 +123,36 @@ public class UserService : IUserInterface
         {
             Success = true,
             Data = false
+        };
+    }
+
+    public async Task<Result<bool>> DeletUserAsync(DeletUserDTO dto)
+    {   
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(dto.Token);
+
+        var id = jwt.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+        var role = jwt.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+
+        if(role.ToUpper() == "A")
+        {
+            var data = await _adminSql.GetAdminByIdAsync(int.Parse(id));
+            int AdminId = data.Id;
+            string cpg = data.CPF;
+        }
+        else
+        {
+            var data = await _psychologistSql.GetPsychologistById(int.Parse(id));
+            int PsychologistId = data.Id;
+            string cpf = data.CPF;
+        }
+
+
+        return new Result<bool>
+        {
+            Success = true,
+            Data = false,
+            Message = "User delet with sucess"
         };
     }
 

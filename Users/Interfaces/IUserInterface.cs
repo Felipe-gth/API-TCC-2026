@@ -9,7 +9,8 @@ using Api.Shared.DTOs.Result;
 using Api.User.DTOs.Address;
 using Api.User.DTOs.Phone;
 using Api.User.DTOs.Email;
-
+using System.IO.Pipelines;
+using Api.User.DTOs.Delet;
 
 public interface IUserInterface
 {
@@ -18,4 +19,5 @@ public interface IUserInterface
     Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto);
     Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
     Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto);
+    Task<Result<bool>> DeletUserAsync(DeletUserDTO dto);
 }

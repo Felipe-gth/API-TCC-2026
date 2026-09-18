@@ -128,4 +128,14 @@ public class UserServiceSql : IUserSql
         
         return result > 0;
     }
+
+    public async Task<bool> DeletUserAsync(int userForDeletId, int userRequieredId, string cpf, string password, string role)
+    {
+        var (success, userRole) = await LoginAsync(new UserModel { CPF = cpf, Password = password.ToString() });
+        if (success)
+        {
+            
+        }
+        return true;
+    }
 }

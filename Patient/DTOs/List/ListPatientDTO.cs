@@ -7,6 +7,11 @@ public class ListPatientDTO
     public string LastName { get; set; } = string.Empty;
     public string CPF { get; set; } = string.Empty;
     public string Age { get; set; } = string.Empty;
+    //public enum StatusEnum
+    //{
+        //active,
+        //disable
+    //}
     public string Role { get; set; } = string.Empty;
 
     public ListPatientDTO() {}

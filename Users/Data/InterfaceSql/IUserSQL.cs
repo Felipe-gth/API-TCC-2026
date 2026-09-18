@@ -10,6 +10,7 @@ public interface IUserSql
     Task<bool> CreateAddressAsync(AddressModel adress);
     Task<bool> CreatePhoneNumberAsync(NumberModel number);
     Task<bool> CreateEmailAsync(EmailModel email);
+    Task<bool> DeletUserAsync(int userForDeletId, int userRequieredId, string cpf, string password, string role);
 
 
 
