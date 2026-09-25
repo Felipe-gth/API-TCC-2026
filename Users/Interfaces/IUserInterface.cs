@@ -20,4 +20,5 @@ public interface IUserInterface
     Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
     Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto);
     Task<Result<bool>> DeletUserAsync(DeletUserDTO dto);
+    Task<Result<bool>> VerifyCPFAsync (string cpf);
 }

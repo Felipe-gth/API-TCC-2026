@@ -32,7 +32,27 @@ public class UserService : IUserInterface
         _psychologistSql = psychologist;
         _adminSql = admin;
     }
+    public static bool TestCpf(string cpf){
+        if (string.IsNullOrWhiteSpace(cpf)) return false;
 
+        cpf = new string(cpf.Where(char.IsDigit).ToArray());
+
+        if (cpf.Length != 11) return false;
+        if (cpf.Distinct().Count() == 1) return false; // rejeita 111.111.111-11 etc.
+
+        int[] d = cpf.Select(c => (int)char.GetNumericValue(c)).ToArray();
+
+        int CalcDigit(int count, int weightStart)
+        {
+            int sum = 0;
+                for (int i = 0; i < count; i++)
+                    sum += d[i] * (weightStart - i);
+
+                    int rest = sum * 10 % 11;
+                    return rest == 10 ? 0 : rest;}
+
+        return CalcDigit(9, 10) == d[9] && CalcDigit(10, 11) == d[10];
+    }
 
     public async Task<Result<ReturnUserDTO>> LoginAsync(LoginUserDTO dto)
     {
@@ -154,6 +174,27 @@ public class UserService : IUserInterface
             Data = false,
             Message = "User delet with sucess"
         };
+    }
+
+    public async Task<Result<bool>> VerifyCPFAsync (string cpf){
+        
+        bool success = TestCpf(cpf);
+        string message;
+
+        if(success){
+            message = "Cpf válido";
+        }
+        else{
+            message = "Cpf inválido";
+        }
+
+        return new Result<bool>
+        {
+            Success = success,
+            Data = false,
+            Message = message
+        };
+        
     }
 
 }

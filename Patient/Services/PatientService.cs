@@ -13,15 +13,18 @@ using Api.User.DTOs.Return.Address;
 using Api.User.DTOs.Return.Email;
 using Api.User.DTOs.Return.Phone;
 using Api.User.Models;
+using Api.User.Interfaces;
 
 namespace Api.Patient.Services;
 
 public class PatientService : IPatientInterface
 {
     private readonly IPatientInterfaceSql _patientSQL;
-    public PatientService(IPatientInterfaceSql patient)
+    private readonly IUserInterface _Iuser;
+    public PatientService(IPatientInterfaceSql patient, IUserInterface Iuser)
     {
         _patientSQL = patient;
+        _Iuser = Iuser;
     }
 
     //Register
@@ -29,6 +32,14 @@ public class PatientService : IPatientInterface
     public async Task<Result<ListPatientDTO>> CreatePatientAsync(RegisterPatientDTO dto)
     {
         var user = new UserModel(0, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
+        var TestCpf = await _Iuser.VerifyCPFAsync(dto.CPF);
+        if(TestCpf.Success == false){
+            return new Result<ListPatientDTO>{
+            Success = TestCpf.Success,
+            Data = null,
+            Message = TestCpf.Message
+            };
+        }
         int data = await _patientSQL.CreatePatientAsync(user);
         if (data <= 0)
         {

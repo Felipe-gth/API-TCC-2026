@@ -18,7 +18,7 @@ public class PatientController : ControllerBase
     {
         _patient = patient;
     }
-    [Authorize(Roles = "P,A")]
+    //[Authorize(Roles = "P,A")]
     [HttpPost("createPatient")]
     public async Task<IActionResult> CreatePatient([FromBody] RegisterPatientDTO dto)
     {

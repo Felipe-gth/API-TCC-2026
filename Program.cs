@@ -23,6 +23,10 @@ using Api.Admin.Data.ServiceSql;
 using Api.Appointment.Interface;
 using Api.Appointment.Data.Interfaces;
 using Api.Appointment.Data.Services;
+using MercadoPago.Config;
+using Api.Payment.Interfaces;
+using Api.Payment.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,7 +100,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     //Appointment
         builder.Services.AddScoped<IAppointmentInterface, AppointmentService>();
         builder.Services.AddScoped<IAppointmentInterfaceSql, AppointmentServieSql>();
+    //Payment
+        builder.Services.AddScoped<IPaymentInterface, PaymentService>();
+//Mercado Pago
+var mercadoPagoToken =
+    builder.Configuration["MercadoPagoApi:AccessToken"]
+    ?? throw new Exception("Mercado Pago Access Token não configurado.");
 
+MercadoPagoConfig.AccessToken = mercadoPagoToken;
 //JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key not configured.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
