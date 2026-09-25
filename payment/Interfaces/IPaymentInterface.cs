@@ -5,4 +5,5 @@ using Api.Payment.DTOs.Return;
 public interface IPaymentInterface
 {
     Task<Result<PaymentChargeCreatedDto>> CreatePaymentCharge(EntryDataPayment dto);
+    Task ProcessWebhook(string orderId);
 }

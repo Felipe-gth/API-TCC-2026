@@ -4,7 +4,9 @@ using Api.Payment.Models;
 
 public class PaymentChargeCreatedDto
 {
-    public long PaymentChargeId { get; set; }
+    public string? OrderId { get; set; }
+
+    public string PaymentChargeId { get; set; }
     public string QrCode { get; set; } = null!;
     public string QrCodeBase64 { get; set; } = null!;
     public decimal Amount { get; set; }

@@ -107,6 +107,10 @@ var mercadoPagoToken =
     builder.Configuration["MercadoPagoApi:AccessToken"]
     ?? throw new Exception("Mercado Pago Access Token não configurado.");
 
+var WebhookSecret =
+    builder.Configuration["MercadoPagoApi:WebhookSecret"]
+    ?? throw new Exception("Mercado Pago Access Token não configurado.");
+
 MercadoPagoConfig.AccessToken = mercadoPagoToken;
 //JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key not configured.");
