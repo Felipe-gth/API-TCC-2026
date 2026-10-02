@@ -1,16 +1,12 @@
-
-using Api.User.DTOs.Address;
-
-namespace Api.User.Interfaces;
-
 using Api.User.DTOs.Login;
 using Api.User.DTOs.Return;
 using Api.Shared.DTOs.Result;
 using Api.User.DTOs.Address;
 using Api.User.DTOs.Phone;
 using Api.User.DTOs.Email;
-using System.IO.Pipelines;
 using Api.User.DTOs.Delet;
+
+namespace Api.User.Interfaces;
 
 public interface IUserInterface
 {
@@ -22,5 +18,5 @@ public interface IUserInterface
     Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
     Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto);
     Task<Result<bool>> DeletUserAsync(DeletUserDTO dto);
-    Task<Result<bool>> VerifyCPFAsync (string cpf);
+    Task<Result<bool>> VerifyCPFAsync(string cpf);
 }

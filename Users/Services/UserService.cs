@@ -1,4 +1,3 @@
-
 using Api.User.DTOs.Address;
 using Api.User.Data.InterfaceSql;
 using Api.User.DTOs.Return;
@@ -11,28 +10,31 @@ using Api.User.DTOs.Email;
 using Api.User.DTOs.Delet;
 using System.IdentityModel.Tokens.Jwt;
 using Api.Psychologist.Data.InterfaceSql;
-using Api.Admin.Data.ServiceSql;
 using Api.Admin.Data.InterfaceSql;
-
-
 
 namespace Api.User.Services;
 
 public class UserService : IUserInterface
-
 {
     private readonly IUserSql _userSql;
     private readonly IAdminInterfaceSql _adminSql;
     private readonly IPsychologistInterfaceSql _psychologistSql;
     private readonly IAuthInterface _auth;
-    public UserService(IUserSql user, IAuthInterface auth, IPsychologistInterfaceSql psychologist, IAdminInterfaceSql admin)
+
+    public UserService(
+        IUserSql user,
+        IAuthInterface auth,
+        IPsychologistInterfaceSql psychologist,
+        IAdminInterfaceSql admin)
     {
         _userSql = user;
         _auth = auth;
         _psychologistSql = psychologist;
         _adminSql = admin;
     }
-    public static bool TestCpf(string cpf){
+
+    public static bool TestCpf(string cpf)
+    {
         if (string.IsNullOrWhiteSpace(cpf)) return false;
 
         cpf = new string(cpf.Where(char.IsDigit).ToArray());
@@ -45,23 +47,28 @@ public class UserService : IUserInterface
         int CalcDigit(int count, int weightStart)
         {
             int sum = 0;
-                for (int i = 0; i < count; i++)
-                    sum += d[i] * (weightStart - i);
+            for (int i = 0; i < count; i++)
+                sum += d[i] * (weightStart - i);
 
-                    int rest = sum * 10 % 11;
-                    return rest == 10 ? 0 : rest;}
+            int rest = sum * 10 % 11;
+            return rest == 10 ? 0 : rest;
+        }
 
         return CalcDigit(9, 10) == d[9] && CalcDigit(10, 11) == d[10];
     }
+
     public async Task<Result<ReturnUserDTO>> LoginAsync(LoginUserDTO dto)
     {
         var user = new UserModel(0, "", "", dto.CPF, "0", dto.Password, "");
         var data = await _userSql.LoginAsync(user);
-        if (data.Success){
+
+        if (data.Success)
+        {
             int result = await _userSql.GetId(dto.CPF, data.Role);
             string token = _auth.NewToken(result, data.Role);
-            
+
             var returnDTO = new ReturnUserDTO(result, token, data.Role);
+
             return new Result<ReturnUserDTO>()
             {
                 Data = returnDTO,
@@ -69,12 +76,14 @@ public class UserService : IUserInterface
                 Message = "Login realizado com sucesso!"
             };
         }
-        else{
+        else
+        {
             return new Result<ReturnUserDTO>()
             {
                 Data = null,
                 Success = false,
-                Message = "Credenciais inválidas!"            };
+                Message = "Credenciais inválidas!"
+            };
         }
     }
 
@@ -82,20 +91,23 @@ public class UserService : IUserInterface
     {
         var adress = new AddressModel(dto);
         var data = await _userSql.EditAddressAsync(adress);
+
         if (data)
         {
             return new Result<bool>
-        {
-            Success = true,
-            Data = false
-        };
+            {
+                Success = true,
+                Data = true
+            };
         }
+
         return new Result<bool>
         {
-            Success = true,
+            Success = false,
             Data = false
         };
     }
+
     public async Task<Result<bool>> EditPhoneNumberAsync(PhoneNumberEntryDTO dtO)
     {
         return new Result<bool>
@@ -104,15 +116,21 @@ public class UserService : IUserInterface
             Data = false
         };
     }
-    
-    }
-    public async Task<Result<bool>> EditEmailAsync(EmailEntryDTO dto)
 
+    public async Task<Result<bool>> EditEmailAsync(EmailEntryDTO dto)
+    {
+        return new Result<bool>
+        {
+            Success = true,
+            Data = false
+        };
+    }
 
     public async Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto)
     {
         var adress = new AddressModel(dto);
         bool data = await _userSql.CreateAddressAsync(adress);
+
         if (!data)
         {
             return new Result<bool>
@@ -121,10 +139,11 @@ public class UserService : IUserInterface
                 Data = false
             };
         }
+
         return new Result<bool>
         {
             Success = true,
-            Data = false
+            Data = true
         };
     }
 
@@ -132,6 +151,7 @@ public class UserService : IUserInterface
     {
         var number = new NumberModel(dto.Id, dto.Number, dto.CountryCode, dto.DDD, dto.IsEmergencyContact);
         bool data = await _userSql.CreatePhoneNumberAsync(number);
+
         if (!data)
         {
             return new Result<bool>
@@ -140,10 +160,11 @@ public class UserService : IUserInterface
                 Data = false
             };
         }
+
         return new Result<bool>
         {
             Success = true,
-            Data = false
+            Data = true
         };
     }
 
@@ -151,6 +172,7 @@ public class UserService : IUserInterface
     {
         var email = new EmailModel(dto.Id, dto.Address, dto.Extension);
         bool data = await _userSql.CreateEmailAsync(email);
+
         if (!data)
         {
             return new Result<bool>
@@ -159,15 +181,16 @@ public class UserService : IUserInterface
                 Data = false
             };
         }
+
         return new Result<bool>
         {
             Success = true,
-            Data = false
+            Data = true
         };
     }
 
     public async Task<Result<bool>> DeletUserAsync(DeletUserDTO dto)
-    {   
+    {
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(dto.Token);
 
@@ -177,17 +200,27 @@ public class UserService : IUserInterface
         bool resultado;
         string message;
 
-        if(role.ToUpper() == "A")
+        if (role.ToUpper() == "A")
         {
             var data = await _adminSql.GetAdminByIdAsync(int.Parse(id));
-            int AdminId = data.Id;
+            int adminId = data.Id;
             string cpf = data.CPF;
-            var result = await _userSql.DeletUserAsync(dto.UserForDeletId, dto.USerForDeletRole, AdminId, cpf, dto.Password, "A");
-            if(result){
+
+            var result = await _userSql.DeletUserAsync(
+                dto.UserForDeletId,
+                dto.USerForDeletRole,
+                adminId,
+                cpf,
+                dto.Password,
+                "A");
+
+            if (result)
+            {
                 resultado = true;
                 message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
             }
-            else{
+            else
+            {
                 resultado = false;
                 message = "Erro ao deletar usuário";
             }
@@ -195,19 +228,28 @@ public class UserService : IUserInterface
         else
         {
             var data = await _psychologistSql.GetPsychologistById(int.Parse(id));
-            int PsychologistId = data.Id;
+            int psychologistId = data.Id;
             string cpf = data.CPF;
-            var result = await _userSql.DeletUserAsync(dto.UserForDeletId, dto.USerForDeletRole, PsychologistId, cpf, dto.Password, "P");
-            if(result){
+
+            var result = await _userSql.DeletUserAsync(
+                dto.UserForDeletId,
+                dto.USerForDeletRole,
+                psychologistId,
+                cpf,
+                dto.Password,
+                "P");
+
+            if (result)
+            {
                 resultado = true;
                 message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
             }
-            else{
+            else
+            {
                 resultado = false;
                 message = "Erro ao deletar usuário";
             }
         }
-
 
         return new Result<bool>
         {
@@ -217,15 +259,17 @@ public class UserService : IUserInterface
         };
     }
 
-    public async Task<Result<bool>> VerifyCPFAsync (string cpf){
-        
+    public async Task<Result<bool>> VerifyCPFAsync(string cpf)
+    {
         bool success = TestCpf(cpf);
         string message;
 
-        if(success){
+        if (success)
+        {
             message = "Cpf válido";
         }
-        else{
+        else
+        {
             message = "Cpf inválido";
         }
 
@@ -235,7 +279,5 @@ public class UserService : IUserInterface
             Data = false,
             Message = message
         };
-        
     }
-
 }

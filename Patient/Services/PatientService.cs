@@ -108,11 +108,14 @@ public class PatientService : IPatientInterface
                 Data = result
             };
         }
-        return new Result<IEnumerable<ListPatientDTO>>
+       return new Result<IEnumerable<ListPatientDTO>>
         {
-            Success = false,
-            Data = null
-        };
+            Success = true,
+            Data = result,
+            Message = result.Count() == 0 
+                ? "Nenhum paciente vinculado a este psicólogo." 
+                : null
+            };
     }
     
     public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto)
