@@ -15,7 +15,9 @@ using Api.User.DTOs.Delet;
 public interface IUserInterface
 {
     Task<Result<ReturnUserDTO>> LoginAsync(LoginUserDTO dto);
-    Task<bool> EditAddressAsync(AddressEntryDTO dto);
+    Task<Result<bool>> EditAddressAsync(AddressEntryDTO dto);
+    Task<Result<bool>> EditPhoneNumberAsync(PhoneNumberEntryDTO dtO);
+    Task<Result<bool>> EditEmailAsync(EmailEntryDTO dto);
     Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto);
     Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto);
     Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto);

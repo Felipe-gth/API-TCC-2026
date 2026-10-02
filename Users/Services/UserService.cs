@@ -53,7 +53,6 @@ public class UserService : IUserInterface
 
         return CalcDigit(9, 10) == d[9] && CalcDigit(10, 11) == d[10];
     }
-
     public async Task<Result<ReturnUserDTO>> LoginAsync(LoginUserDTO dto)
     {
         var user = new UserModel(0, "", "", dto.CPF, "0", dto.Password, "");
@@ -66,28 +65,49 @@ public class UserService : IUserInterface
             return new Result<ReturnUserDTO>()
             {
                 Data = returnDTO,
-                Success = true
+                Success = true,
+                Message = "Login realizado com sucesso!"
             };
         }
         else{
             return new Result<ReturnUserDTO>()
             {
                 Data = null,
-                Success = false
-            };
+                Success = false,
+                Message = "Credenciais inválidas!"            };
         }
     }
 
-    public async Task<bool> EditAddressAsync(AddressEntryDTO dto)
+    public async Task<Result<bool>> EditAddressAsync(AddressEntryDTO dto)
     {
         var adress = new AddressModel(dto);
         var data = await _userSql.EditAddressAsync(adress);
         if (data)
         {
-            return true;
+            return new Result<bool>
+        {
+            Success = true,
+            Data = false
+        };
         }
-        return false;
+        return new Result<bool>
+        {
+            Success = true,
+            Data = false
+        };
     }
+    public async Task<Result<bool>> EditPhoneNumberAsync(PhoneNumberEntryDTO dtO)
+    {
+        return new Result<bool>
+        {
+            Success = true,
+            Data = false
+        };
+    }
+    
+    }
+    public async Task<Result<bool>> EditEmailAsync(EmailEntryDTO dto)
+
 
     public async Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto)
     {
@@ -154,25 +174,46 @@ public class UserService : IUserInterface
         var id = jwt.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
         var role = jwt.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
+        bool resultado;
+        string message;
+
         if(role.ToUpper() == "A")
         {
             var data = await _adminSql.GetAdminByIdAsync(int.Parse(id));
             int AdminId = data.Id;
-            string cpg = data.CPF;
+            string cpf = data.CPF;
+            var result = await _userSql.DeletUserAsync(dto.UserForDeletId, dto.USerForDeletRole, AdminId, cpf, dto.Password, "A");
+            if(result){
+                resultado = true;
+                message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
+            }
+            else{
+                resultado = false;
+                message = "Erro ao deletar usuário";
+            }
         }
         else
         {
             var data = await _psychologistSql.GetPsychologistById(int.Parse(id));
             int PsychologistId = data.Id;
             string cpf = data.CPF;
+            var result = await _userSql.DeletUserAsync(dto.UserForDeletId, dto.USerForDeletRole, PsychologistId, cpf, dto.Password, "P");
+            if(result){
+                resultado = true;
+                message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
+            }
+            else{
+                resultado = false;
+                message = "Erro ao deletar usuário";
+            }
         }
 
 
         return new Result<bool>
         {
-            Success = true,
+            Success = resultado,
             Data = false,
-            Message = "User delet with sucess"
+            Message = message
         };
     }
 

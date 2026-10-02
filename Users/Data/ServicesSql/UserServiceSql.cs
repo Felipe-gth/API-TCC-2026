@@ -129,13 +129,29 @@ public class UserServiceSql : IUserSql
         return result > 0;
     }
 
-    public async Task<bool> DeletUserAsync(int userForDeletId, int userRequieredId, string cpf, string password, string role)
-    {
+    public async Task<bool> DeletUserAsync(int userForDeletId,string userForDeletROle, int userRequieredId, string cpf, string password, string role)
+    {   
+        using var connection = DBConnection.Connection();
         var (success, userRole) = await LoginAsync(new UserModel { CPF = cpf, Password = password.ToString() });
+        string Person;
         if (success)
-        {
-            
+    {
+        if(userForDeletROle == "P"){
+            Person = "patient";
         }
-        return true;
+        else{
+            Person = "psychologist";
+        }
+
+        string sql = $"DELETE FROM {Person} WHERE id = @Id";
+
+        int rowsAffected = await connection.ExecuteAsync(
+            sql,
+            new { Id = userForDeletId }
+        );
+
+        return rowsAffected > 0;
+    }
+        return false;
     }
 }

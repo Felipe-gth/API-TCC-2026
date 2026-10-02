@@ -44,7 +44,7 @@ public class UserController : ControllerBase
         try
         {
             var result = await _userService.EditAddressAsync(dto);
-            if (result)
+            if (result.Success)
             {
                 return Ok(result);
             }

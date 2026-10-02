@@ -102,7 +102,7 @@ public class PatientServiceSql : IPatientInterfaceSql
         //
         //return listpcte;
         var listpcte = await connection.QueryAsync<ListPatientDTO>(
-            @"SELECT p.id, p.name, p.lastName, p.cpf, p.age, p.status, UPPER(p.role) AS role
+            @"SELECT p.id, p.name, p.lastName, p.cpf, p.age, UPPER(p.role) AS role
               FROM patient_psychologist pp
               JOIN patient p ON p.id = pp.patient_id
               WHERE pp.psychologist_id = @psychologistId
