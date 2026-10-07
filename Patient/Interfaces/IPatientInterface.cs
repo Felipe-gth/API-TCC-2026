@@ -20,4 +20,5 @@ public interface IPatientInterface
     Task<Result<IEnumerable<ListPatientDTO>>> ListPatient(int? psychologistId = null);
     Task<Result<bool>> LinkPatientToPsychologist(LinkPatientPsychologistDTO dto);
     Task<Result<ReturnPatientPsychologistDTO>> GetPatientPsychologist(int patientId);
+    Task<Result<bool>> EditPatientAsync(EditPatientDTO dto);
 }

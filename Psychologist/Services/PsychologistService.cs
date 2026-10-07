@@ -90,10 +90,4 @@ public class PsychologistService : IPsychologistInterface
             Data = null
         };
     }
-
-    public async Task<Result<bool>> DeletePsychologist(int id)
-    {
-        bool deleted = await _psychologistSQL.DeletePsychologist(id);
-        return new Result<bool>(deleted, deleted);
-    }
 }

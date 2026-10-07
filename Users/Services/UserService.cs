@@ -1,6 +1,9 @@
 using Api.User.DTOs.Address;
 using Api.User.Data.InterfaceSql;
 using Api.User.DTOs.Return;
+using Api.User.DTOs.Return.Address;
+using Api.User.DTOs.Return.Phone;
+using Api.User.DTOs.Return.Email;
 using Api.Shared.DTOs.Result;
 using Api.User.Interfaces;
 using Api.User.DTOs.Login;
@@ -108,7 +111,7 @@ public class UserService : IUserInterface
         };
     }
 
-    public async Task<Result<bool>> EditPhoneNumberAsync(PhoneNumberEntryDTO dtO)
+    public async Task<Result<bool>> EditPhoneNumberAsync(PhoneNumberEntryDTO dto)
     {
         return new Result<bool>
         {
@@ -126,66 +129,86 @@ public class UserService : IUserInterface
         };
     }
 
-    public async Task<Result<bool>> CreateAddressAsync(AddressEntryDTO dto)
+    public async Task<Result<AddressReturnDTO>> CreateAddressAsync(AddressEntryDTO dto)
     {
         var adress = new AddressModel(dto);
-        bool data = await _userSql.CreateAddressAsync(adress);
+        int addressId = await _userSql.CreateAddressAsync(adress);
 
-        if (!data)
+        if (addressId <= 0)
         {
-            return new Result<bool>
+            return new Result<AddressReturnDTO>
             {
                 Success = false,
-                Data = false
+                Data = null,
+                Message = "Falha ao criar endereço"
             };
         }
 
-        return new Result<bool>
+        var created = new AddressReturnDTO(
+            addressId,
+            adress.CEP,
+            adress.City,
+            adress.State,
+            adress.Number,
+            adress.IsApartment,
+            adress.ApartmentNumber
+        );
+
+        return new Result<AddressReturnDTO>
         {
             Success = true,
-            Data = true
+            Data = created,
+            Message = "Endereço criado com sucesso"
         };
     }
 
-    public async Task<Result<bool>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto)
+    public async Task<Result<PhoneNumberReturnDTO>> CreatePhoneNumberAsync(PhoneNumberEntryDTO dto)
     {
         var number = new NumberModel(dto.Id, dto.Number, dto.CountryCode, dto.DDD, dto.IsEmergencyContact);
-        bool data = await _userSql.CreatePhoneNumberAsync(number);
+        int phoneId = await _userSql.CreatePhoneNumberAsync(number);
 
-        if (!data)
+        if (phoneId <= 0)
         {
-            return new Result<bool>
+            return new Result<PhoneNumberReturnDTO>
             {
                 Success = false,
-                Data = false
+                Data = null,
+                Message = "Falha ao criar telefone"
             };
         }
 
-        return new Result<bool>
+        var created = new PhoneNumberReturnDTO(phoneId, number.Number, number.DDD);
+
+        return new Result<PhoneNumberReturnDTO>
         {
             Success = true,
-            Data = true
+            Data = created,
+            Message = "Telefone criado com sucesso"
         };
     }
 
-    public async Task<Result<bool>> CreateEmailAsync(EmailEntryDTO dto)
+    public async Task<Result<EmailReturnDTO>> CreateEmailAsync(EmailEntryDTO dto)
     {
         var email = new EmailModel(dto.Id, dto.Address, dto.Extension);
-        bool data = await _userSql.CreateEmailAsync(email);
+        int emailId = await _userSql.CreateEmailAsync(email);
 
-        if (!data)
+        if (emailId <= 0)
         {
-            return new Result<bool>
+            return new Result<EmailReturnDTO>
             {
                 Success = false,
-                Data = false
+                Data = null,
+                Message = "Falha ao criar e-mail"
             };
         }
 
-        return new Result<bool>
+        var created = new EmailReturnDTO(emailId, email.Address, email.Extension);
+
+        return new Result<EmailReturnDTO>
         {
             Success = true,
-            Data = true
+            Data = created,
+            Message = "E-mail criado com sucesso"
         };
     }
 
@@ -254,7 +277,7 @@ public class UserService : IUserInterface
         return new Result<bool>
         {
             Success = resultado,
-            Data = false,
+            Data = resultado,
             Message = message
         };
     }
@@ -278,6 +301,186 @@ public class UserService : IUserInterface
             Success = success,
             Data = false,
             Message = message
+        };
+    }
+
+    public async Task<Result<IEnumerable<AddressReturnDTO>>> GetAddressesByPatientIdAsync(int patientId)
+    {
+        var addresses = await _userSql.GetAddressesByPatientIdAsync(patientId);
+        
+        var dtos = addresses.Select(a => new AddressReturnDTO(
+            a.Id,
+            a.CEP,
+            a.City,
+            a.State,
+            a.Number,
+            a.IsApartment,
+            a.ApartmentNumber
+        ));
+
+        return new Result<IEnumerable<AddressReturnDTO>>
+        {
+            Success = true,
+            Data = dtos
+        };
+    }
+
+    public async Task<Result<IEnumerable<PhoneNumberReturnDTO>>> GetPhoneNumbersByPatientIdAsync(int patientId)
+    {
+        var phones = await _userSql.GetPhoneNumbersByPatientIdAsync(patientId);
+        
+        var dtos = phones.Select(p => new PhoneNumberReturnDTO(
+            p.Id,
+            p.Number,
+            p.DDD
+        ));
+
+        return new Result<IEnumerable<PhoneNumberReturnDTO>>
+        {
+            Success = true,
+            Data = dtos
+        };
+    }
+
+    public async Task<Result<IEnumerable<EmailReturnDTO>>> GetEmailsByPatientIdAsync(int patientId)
+    {
+        var emails = await _userSql.GetEmailsByPatientIdAsync(patientId);
+        
+        var dtos = emails.Select(e => new EmailReturnDTO(
+            e.Id,
+            e.Address,
+            e.Extension
+        ));
+
+        return new Result<IEnumerable<EmailReturnDTO>>
+        {
+            Success = true,
+            Data = dtos
+        };
+    }
+
+    // Update methods
+    public async Task<Result<AddressReturnDTO>> UpdateAddressAsync(int addressId, AddressEntryDTO dto)
+    {
+        var address = new AddressModel(dto);
+        address.Id = addressId; // Override with route parameter ID
+
+        bool success = await _userSql.UpdateAddressAsync(address);
+
+        if (!success)
+        {
+            return new Result<AddressReturnDTO>
+            {
+                Success = false,
+                Data = null,
+                Message = "Endereço não encontrado ou falha ao atualizar"
+            };
+        }
+
+        var updated = new AddressReturnDTO(
+            addressId,
+            address.CEP,
+            address.City,
+            address.State,
+            address.Number,
+            address.IsApartment,
+            address.ApartmentNumber
+        );
+
+        return new Result<AddressReturnDTO>
+        {
+            Success = true,
+            Data = updated,
+            Message = "Endereço atualizado com sucesso"
+        };
+    }
+
+    public async Task<Result<PhoneNumberReturnDTO>> UpdatePhoneNumberAsync(int phoneId, PhoneNumberEntryDTO dto)
+    {
+        var number = new NumberModel(phoneId, dto.Number, dto.CountryCode, dto.DDD, dto.IsEmergencyContact);
+
+        bool success = await _userSql.UpdatePhoneNumberAsync(number);
+
+        if (!success)
+        {
+            return new Result<PhoneNumberReturnDTO>
+            {
+                Success = false,
+                Data = null,
+                Message = "Telefone não encontrado ou falha ao atualizar"
+            };
+        }
+
+        var updated = new PhoneNumberReturnDTO(phoneId, number.Number, number.DDD);
+
+        return new Result<PhoneNumberReturnDTO>
+        {
+            Success = true,
+            Data = updated,
+            Message = "Telefone atualizado com sucesso"
+        };
+    }
+
+    public async Task<Result<EmailReturnDTO>> UpdateEmailAsync(int emailId, EmailEntryDTO dto)
+    {
+        var email = new EmailModel(emailId, dto.Address, dto.Extension);
+
+        bool success = await _userSql.UpdateEmailAsync(email);
+
+        if (!success)
+        {
+            return new Result<EmailReturnDTO>
+            {
+                Success = false,
+                Data = null,
+                Message = "E-mail não encontrado ou falha ao atualizar"
+            };
+        }
+
+        var updated = new EmailReturnDTO(emailId, email.Address, email.Extension);
+
+        return new Result<EmailReturnDTO>
+        {
+            Success = true,
+            Data = updated,
+            Message = "E-mail atualizado com sucesso"
+        };
+    }
+
+    // Delete methods
+    public async Task<Result<bool>> DeleteAddressAsync(int addressId)
+    {
+        bool success = await _userSql.DeleteAddressAsync(addressId);
+
+        return new Result<bool>
+        {
+            Success = success,
+            Data = success,
+            Message = success ? "Endereço deletado com sucesso" : "Endereço não encontrado"
+        };
+    }
+
+    public async Task<Result<bool>> DeletePhoneNumberAsync(int phoneId)
+    {
+        bool success = await _userSql.DeletePhoneNumberAsync(phoneId);
+
+        return new Result<bool>
+        {
+            Success = success,
+            Data = success,
+            Message = success ? "Telefone deletado com sucesso" : "Telefone não encontrado"
+        };
+    }
+
+    public async Task<Result<bool>> DeleteEmailAsync(int emailId)
+    {
+        bool success = await _userSql.DeleteEmailAsync(emailId);
+
+        return new Result<bool>
+        {
+            Success = success,
+            Data = success,
+            Message = success ? "E-mail deletado com sucesso" : "E-mail não encontrado"
         };
     }
 }

@@ -98,22 +98,4 @@ public class PsychologistController : ControllerBase
             return StatusCode(500, "Internal Error: " + ex.Message);
         }
     }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePsychologist(int id)
-    {
-        try
-        {
-            var result = await _psychologist.DeletePsychologist(id);
-            if (result.Success && result.Data)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Internal Error: " + ex.Message);
-        }
-    }
 }

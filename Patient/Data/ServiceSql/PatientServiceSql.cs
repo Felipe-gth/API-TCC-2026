@@ -4,7 +4,7 @@ using Api.Patient.DTOs.List;
 using Api.User.DTOs.Return;
 using Api.User.Models;
 using Dapper;
-
+using BCrypt.Net;
 using Properties;
 
 namespace Api.Patient.Data.ServiceSql;
@@ -114,9 +114,14 @@ public class PatientServiceSql : IPatientInterfaceSql
     public async Task<bool> EditPatientAsync(UserModel user)
     {
         using var connection = DBConnection.Connection();
-        var EditPatient = connection.Execute("UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password WHERE id = @id",
-            new {name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, password = user.Password, id = user.Id});
-        return EditPatient > 0;
+        
+        string hashpass = BCrypt.Net.BCrypt.HashPassword(user.Password);
+        
+        var editPatient = await connection.ExecuteAsync(
+            "UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password WHERE id = @id",
+            new { name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, password = hashpass, id = user.Id });
+        
+        return editPatient > 0;
     }
 
     public async Task<bool> LinkPatientToPsychologistSql (int patientId, int psychologistId)

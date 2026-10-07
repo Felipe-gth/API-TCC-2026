@@ -111,5 +111,25 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+    // Edit patient endpoint
+    [Authorize(Roles = "C")]
+    [HttpPut("edit")]
+    public async Task<IActionResult> EditPatient([FromBody] EditPatientDTO dto)
+    {
+        try
+        {
+            var result = await _patient.EditPatientAsync(dto);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
     
 }
