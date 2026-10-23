@@ -78,27 +78,29 @@ public class PatientServiceSql : IPatientInterfaceSql
         using var connection = DBConnection.Connection();
 
         var patient = await connection.QuerySingleOrDefaultAsync<ListPatientDTO>("SELECT id, name, lastname, age, cpf, UPPER(role), isActive AS role FROM patient where id = @id",
-            new {id = id});
+            new { id = id });
         return patient;
     }
-    
-    public async Task<IEnumerable<ListPatientDTO>> ListAllPatient(){
+
+    public async Task<IEnumerable<ListPatientDTO>> ListAllPatient()
+    {
         using var connection = DBConnection.Connection();
-        
-            var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age,  UPPER(role) AS role FROM patient where isActive = true");
-            //var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age, status,  UPPER(role) AS role FROM patient");
+
+        var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age,  UPPER(role) AS role FROM patient where isActive = true");
+        //var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age, status,  UPPER(role) AS role FROM patient");
         return listpcte;
     }
 
-    public async Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId){
+    public async Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId)
+    {
         using var connection = DBConnection.Connection();
         //var listpcte = await connection.QueryAsync<ListPatientDTO>(
-            //@"SELECT p.id, p.name, p.lastName, p.cpf, p.age, p.status, UPPER(p.role) AS role
-              //FROM patient_psychologist pp
-              //JOIN patient p ON p.id = pp.patient_id
-              //WHERE pp.psychologist_id = @psychologistId
-                //AND pp.active = 1;",
-            //new { psychologistId });
+        //@"SELECT p.id, p.name, p.lastName, p.cpf, p.age, p.status, UPPER(p.role) AS role
+        //FROM patient_psychologist pp
+        //JOIN patient p ON p.id = pp.patient_id
+        //WHERE pp.psychologist_id = @psychologistId
+        //AND pp.active = 1;",
+        //new { psychologistId });
         //
         //return listpcte;
         var listpcte = await connection.QueryAsync<ListPatientDTO>(
@@ -114,32 +116,60 @@ public class PatientServiceSql : IPatientInterfaceSql
     public async Task<bool> EditPatientAsync(UserModel user)
     {
         using var connection = DBConnection.Connection();
-        
+
         string hashpass = BCrypt.Net.BCrypt.HashPassword(user.Password);
-        
+
         var editPatient = await connection.ExecuteAsync(
             "UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password WHERE id = @id",
             new { name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, password = hashpass, id = user.Id });
-        
+
         return editPatient > 0;
     }
 
-    public async Task<bool> LinkPatientToPsychologistSql (int patientId, int psychologistId)
+    public async Task<bool> LinkPatientToPsychologistSql(int patientId, int psychologistId)
     {
         using var connection = DBConnection.Connection();
         using var transaction = connection.BeginTransaction();
 
         try
         {
-            await connection.ExecuteAsync(
-                "UPDATE patient_psychologist SET active = 0 WHERE patient_id = @patientId AND active = 1;",
+            // Verifica se o paciente já possui um psicólogo ativo
+            var alreadyLinked = await connection.QuerySingleAsync<bool>(
+                @"SELECT EXISTS (
+            SELECT 1
+            FROM patient_psychologist
+            WHERE patient_id = @patientId
+              AND active = 1
+        );",
                 new { patientId },
-                transaction);
+                transaction
+            );
 
+            if (alreadyLinked)
+            {
+                transaction.Rollback();
+                return false;
+            }
+
+            // Desativa vínculos anteriores, caso existam
+            await connection.ExecuteAsync(
+                @"UPDATE patient_psychologist
+          SET active = 0
+          WHERE patient_id = @patientId
+            AND active = 1;",
+                new { patientId },
+                transaction
+            );
+
+            // Cria o novo vínculo
             var inserted = await connection.ExecuteAsync(
-                "INSERT INTO patient_psychologist (patient_id, psychologist_id, active) VALUES (@patientId, @psychologistId, 1);",
+                @"INSERT INTO patient_psychologist
+            (patient_id, psychologist_id, active)
+          VALUES
+            (@patientId, @psychologistId, 1);",
                 new { patientId, psychologistId },
-                transaction);
+                transaction
+            );
 
             transaction.Commit();
             return inserted > 0;
@@ -151,7 +181,7 @@ public class PatientServiceSql : IPatientInterfaceSql
         }
     }
 
-    public async Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql (int patientId)
+    public async Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql(int patientId)
     {
         using var connection = DBConnection.Connection();
 
@@ -169,4 +199,28 @@ public class PatientServiceSql : IPatientInterfaceSql
 
         return result;
     }
+
+    public async Task<IEnumerable<ListPatientDTO>>ListPatientNotActiveFromPsychologistDb(int psychologistId)
+{
+    using var connection = DBConnection.Connection();
+
+    var listpcte = await connection.QueryAsync<ListPatientDTO>(
+        @"SELECT
+              p.id,
+              p.name,
+              p.lastName,
+              p.cpf,
+              p.age,
+              UPPER(p.role) AS role,
+              p.isActive AS isActive
+          FROM patient_psychologist pp
+          JOIN patient p ON p.id = pp.patient_id
+          WHERE pp.psychologist_id = @psychologistId
+            AND pp.active = 1
+            AND p.isActive = 0;",
+        new { psychologistId }
+    );
+
+    return listpcte;
+}
 }

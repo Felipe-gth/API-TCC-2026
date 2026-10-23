@@ -33,11 +33,13 @@ public class PatientService : IPatientInterface
     {
         var user = new UserModel(0, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
         var TestCpf = await _Iuser.VerifyCPFAsync(dto.CPF);
-        if(TestCpf.Success == false){
-            return new Result<ListPatientDTO>{
-            Success = TestCpf.Success,
-            Data = null,
-            Message = TestCpf.Message
+        if (TestCpf.Success == false)
+        {
+            return new Result<ListPatientDTO>
+            {
+                Success = TestCpf.Success,
+                Data = null,
+                Message = TestCpf.Message
             };
         }
         int data = await _patientSQL.CreatePatientAsync(user);
@@ -74,7 +76,7 @@ public class PatientService : IPatientInterface
     //Login
 
 
-    
+
 
     public async Task<Result<ListPatientDTO>> GetPatientByIdAsync(int id)
     {
@@ -108,16 +110,16 @@ public class PatientService : IPatientInterface
                 Data = result
             };
         }
-       return new Result<IEnumerable<ListPatientDTO>>
+        return new Result<IEnumerable<ListPatientDTO>>
         {
             Success = true,
             Data = result,
-            Message = result.Count() == 0 
-                ? "Nenhum paciente vinculado a este psicólogo." 
-                : null
-            };
+            Message = result.Count() == 0
+                 ? "Nenhum paciente vinculado a este psicólogo."
+                 : null
+        };
     }
-    
+
     public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto)
     {
         var patient = new UserModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
@@ -152,4 +154,16 @@ public class PatientService : IPatientInterface
         }
         return new Result<ReturnPatientPsychologistDTO>(false, null);
     }
+
+    public async Task<Result<IEnumerable<ListPatientDTO>>>
+    ListPatientNotActiveFromPsychologist(int psychologistId)
+{
+    var pacientes = await _patientSQL
+        .ListPatientNotActiveFromPsychologistDb(psychologistId);
+
+    return new Result<IEnumerable<ListPatientDTO>>
+    {
+        Data = pacientes
+    };
+}
 }

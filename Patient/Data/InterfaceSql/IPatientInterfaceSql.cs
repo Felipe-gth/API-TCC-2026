@@ -17,7 +17,7 @@ public interface IPatientInterfaceSql
     Task<IEnumerable<ListPatientDTO>> ListAllPatient();
     Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId);
     Task<bool> EditPatientAsync(UserModel user);
-    Task<bool> LinkPatientToPsychologistSql (int patientId, int psychologistId);
-    Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql (int patientId);
-
+    Task<bool> LinkPatientToPsychologistSql(int patientId, int psychologistId);
+    Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql(int patientId);
+    Task<IEnumerable<ListPatientDTO>>ListPatientNotActiveFromPsychologistDb(int psychologistId);
 }

@@ -36,7 +36,7 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    
+
     [Authorize(Roles = "C,P,A")]
     [HttpGet("get-by-id/{id}")]
     public async Task<IActionResult> GetPatientById(int id)
@@ -73,7 +73,7 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    
+
     [Authorize(Roles = "A,P")]
     [HttpPost("link-psychologist")]
     public async Task<IActionResult> LinkPatientToPsychologist([FromBody] LinkPatientPsychologistDTO dto)
@@ -131,5 +131,18 @@ public class PatientController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+    [Authorize(Roles = "P,A")]
+[HttpGet("{psychologistId}/listPatientNotActive")]
+public async Task<IActionResult> ListPatientNotActiveFromPsychologist(
+    int psychologistId)
+{
+    var result = await _patient.ListPatientNotActiveFromPsychologist(psychologistId);
+
+    if (result.Data != null)
+        return Ok(result);
+
+    return NotFound();
+}
     
 }
