@@ -77,7 +77,7 @@ public class PatientServiceSql : IPatientInterfaceSql
     {
         using var connection = DBConnection.Connection();
 
-        var patient = await connection.QuerySingleOrDefaultAsync<ListPatientDTO>("SELECT id, name, lastname, age, cpf, UPPER(role) AS role FROM patient where id = @id",
+        var patient = await connection.QuerySingleOrDefaultAsync<ListPatientDTO>("SELECT id, name, lastname, age, cpf, UPPER(role), isActive AS role FROM patient where id = @id",
             new {id = id});
         return patient;
     }
@@ -85,7 +85,7 @@ public class PatientServiceSql : IPatientInterfaceSql
     public async Task<IEnumerable<ListPatientDTO>> ListAllPatient(){
         using var connection = DBConnection.Connection();
         
-            var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age,  UPPER(role) AS role FROM patient");
+            var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age,  UPPER(role) AS role FROM patient where isActive = true");
             //var listpcte = await connection.QueryAsync<ListPatientDTO>("SELECT id, name, lastName, cpf, age, status,  UPPER(role) AS role FROM patient");
         return listpcte;
     }
@@ -102,7 +102,7 @@ public class PatientServiceSql : IPatientInterfaceSql
         //
         //return listpcte;
         var listpcte = await connection.QueryAsync<ListPatientDTO>(
-            @"SELECT p.id, p.name, p.lastName, p.cpf, p.age, UPPER(p.role) AS role
+            @"SELECT p.id, p.name, p.lastName, p.cpf, p.age, UPPER(p.role), isActive AS role
               FROM patient_psychologist pp
               JOIN patient p ON p.id = pp.patient_id
               WHERE pp.psychologist_id = @psychologistId

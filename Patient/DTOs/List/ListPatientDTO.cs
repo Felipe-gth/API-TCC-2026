@@ -13,6 +13,7 @@ public class ListPatientDTO
         //disable
     //}
     public string Role { get; set; } = string.Empty;
+    public bool isActive {get; set;}
 
     public ListPatientDTO() {}
 }
