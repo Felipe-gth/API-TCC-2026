@@ -212,7 +212,9 @@ public class UserService : IUserInterface
         };
     }
 
-    public async Task<Result<bool>> DeletUserAsync(DeletUserDTO dto)
+public async Task<Result<bool>> DeletUserAsync(DeletUserDTO dto)
+{
+    try
     {
         var handler = new JwtSecurityTokenHandler();
         var jwt = handler.ReadJwtToken(dto.Token);
@@ -220,16 +222,27 @@ public class UserService : IUserInterface
         var id = jwt.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
         var role = jwt.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
+        if (id == null || !int.TryParse(id, out int userId))
+        {
+            return new Result<bool>
+            {
+                Success = false,
+                Data = false,
+                Message = "ID inválido no token."
+            };
+        }
+
         bool resultado;
         string message;
 
-        if (role.ToUpper() == "A")
+        if (role?.ToUpper() == "A")
         {
-            var data = await _adminSql.GetAdminByIdAsync(int.Parse(id));
+            var data = await _adminSql.GetAdminByIdAsync(userId);
+
             int adminId = data.Id;
             string cpf = data.CPF;
 
-            var result = await _userSql.DeletUserAsync(
+            resultado = await _userSql.DeletUserAsync(
                 dto.UserForDeletId,
                 dto.USerForDeletRole,
                 adminId,
@@ -237,42 +250,35 @@ public class UserService : IUserInterface
                 dto.Password,
                 "A");
 
-            if (result)
-            {
-                resultado = true;
-                message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
-            }
-            else
-            {
-                resultado = false;
-                message = "Erro ao deletar usuário";
-            }
         }
-        else
+        else if (role?.ToUpper() == "P")
         {
-            var data = await _psychologistSql.GetPsychologistById(int.Parse(id));
+            var data = await _psychologistSql.GetPsychologistById(userId);
+
             int psychologistId = data.Id;
             string cpf = data.CPF;
 
-            var result = await _userSql.DeletUserAsync(
+            resultado = await _userSql.DeletUserAsync(
                 dto.UserForDeletId,
                 dto.USerForDeletRole,
                 psychologistId,
                 cpf,
                 dto.Password,
                 "P");
-
-            if (result)
-            {
-                resultado = true;
-                message = $"Usuário de id {dto.UserForDeletId} deletado com sucesso";
-            }
-            else
-            {
-                resultado = false;
-                message = "Erro ao deletar usuário";
-            }
         }
+        else
+        {
+            return new Result<bool>
+            {
+                Success = false,
+                Data = false,
+                Message = "Cargo inválido no token."
+            };
+        }
+
+        message = resultado
+            ? $"Usuário de id {dto.UserForDeletId} deletado com sucesso"
+            : "Erro ao deletar usuário";
 
         return new Result<bool>
         {
@@ -281,6 +287,17 @@ public class UserService : IUserInterface
             Message = message
         };
     }
+    catch (Exception ex)
+    {
+        // Se houver ILogger no serviço, registre a exceção aqui.
+        return new Result<bool>
+        {
+            Success = false,
+            Data = false,
+            Message = "Ocorreu um erro ao tentar deletar o usuário."
+        };
+    }
+}
 
     public async Task<Result<bool>> VerifyCPFAsync(string cpf)
     {

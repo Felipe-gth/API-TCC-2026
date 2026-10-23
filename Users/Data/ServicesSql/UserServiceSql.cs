@@ -156,31 +156,76 @@ public class UserServiceSql : IUserSql
         return id;
     }
 
-    public async Task<bool> DeletUserAsync(int userForDeletId,string userForDeletROle, int userRequieredId, string cpf, string password, string role)
-    {   
-        using var connection = DBConnection.Connection();
-        var (success, userRole) = await LoginAsync(new UserModel { CPF = cpf, Password = password.ToString() });
-        string Person;
-        if (success)
+    
+public async Task<bool> DeletUserAsync(
+    int userForDeletId,
+    string userForDeletROle,
+    int userRequieredId,
+    string cpf,
+    string password,
+    string role)
+{
+    try
     {
-        if(userForDeletROle == "P"){
-            Person = "patient";
+        using var connection = DBConnection.Connection();
+
+        var (success, userRole) = await LoginAsync(
+            new UserModel
+            {
+                CPF = cpf,
+                Password = password
+            });
+
+        string Person;
+
+        if (success)
+        {
+            if (userForDeletROle == "C")
+            {
+                Person = "patient";
+            }
+            else
+            {
+                Person = "psychologist";
+            }
+
+            string sql = $"UPDATE {Person} SET isActive = false WHERE id = @id";
+
+            int rowsAffected = await connection.ExecuteAsync(
+                sql,
+                new { Id = userForDeletId }
+            );
+
+            if (rowsAffected > 0)
+            {
+                Console.WriteLine(
+                    $"Usuário {userForDeletId} deletado com sucesso."
+                );
+
+                return true;
+            }
+
+            Console.WriteLine(
+                $"Nenhum usuário encontrado com o ID {userForDeletId}."
+            );
+
+            return false;
         }
-        else{
-            Person = "psychologist";
-        }
 
-        string sql = $"DELETE FROM {Person} WHERE id = @Id";
+        Console.WriteLine("Falha na autenticação. Usuário não deletado.");
 
-        int rowsAffected = await connection.ExecuteAsync(
-            sql,
-            new { Id = userForDeletId }
-        );
-
-        return rowsAffected > 0;
-    }
         return false;
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine(
+            $"Erro ao deletar usuário {userForDeletId}: {ex}"
+        );
+
+        return false;
+    }
+}
+
 
     public async Task<IEnumerable<AddressModel>> GetAddressesByPatientIdAsync(int patientId)
     {
