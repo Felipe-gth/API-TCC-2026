@@ -797,7 +797,38 @@ Get available time slots for a psychologist on a specific date.
 
 ---
 
-### 4. Create Availability Days
+### 4. Get Service Days
+
+Retorna a grade recorrente já cadastrada para o psicólogo, agrupada por dia da semana. Usada para deixar os horários existentes pré-selecionados na tela de disponibilidade.
+
+**Endpoint:** `GET /api/appointment/service-days/{psychologistId}`  
+**Auth:** Required (Role: P, A)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `psychologistId` | integer | Psychologist ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "weekDay": 1,
+      "hours": ["09:00", "10:00", "14:00"]
+    },
+    {
+      "weekDay": 3,
+      "hours": ["08:00", "11:00"]
+    }
+  ]
+}
+```
+
+---
+
+### 5. Create Availability Days
 
 Set up recurring availability schedule for a psychologist.
 
@@ -842,7 +873,7 @@ Set up recurring availability schedule for a psychologist.
 
 ---
 
-### 5. Update Appointment Status
+### 6. Update Appointment Status
 
 Update the status of an appointment.
 

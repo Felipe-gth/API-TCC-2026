@@ -97,6 +97,22 @@ public class AppointmentController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "P,A")]
+    [HttpGet("service-days/{psychologistId}")]
+    public async Task<IActionResult> GetServiceDays(int psychologistId)
+    {
+        try
+        {
+            var result = await _appointment.GetServiceDays(psychologistId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
     [Authorize(Roles = "C,P,A")]
     [HttpGet("patient-agenda/{patientId}")]
     public async Task<IActionResult> GetPatientAgenda(int patientId)

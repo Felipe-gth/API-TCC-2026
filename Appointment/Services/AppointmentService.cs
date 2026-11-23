@@ -78,6 +78,26 @@ public class AppointmentService : IAppointmentInterface
         return new Result<bool>(success, registered);
     }
 
+    public async Task<Result<List<ServiceDayDTO>>> GetServiceDays (int psychologistId)
+    {
+        var rows = await _appointmentSql.GetServiceDays(psychologistId);
+
+        var days = rows
+            .GroupBy(row => row.WeekDay)
+            .OrderBy(group => group.Key)
+            .Select(group => new ServiceDayDTO
+            {
+                WeekDay = group.Key,
+                Hours = group
+                    .Select(row => row.Hour)
+                    .OrderBy(hour => hour)
+                    .ToList()
+            })
+            .ToList();
+
+        return new Result<List<ServiceDayDTO>>(true, days);
+    }
+
     public async Task<Result<ReturnAvailabilityDTO>> GetAvailabilityByDate (int psychologistId, DateOnly date)
     {
         var weekDay = (int)date.DayOfWeek;

@@ -4,6 +4,7 @@ using Api.Appointment.Data.Interfaces;
 using System.Data.SqlClient;
 using Properties;
 using Api.Appointment.Models;
+using Api.Appointment.DTOs.List;
 using Dapper;
 public class AppointmentServieSql : IAppointmentInterfaceSql
 {
@@ -67,6 +68,21 @@ public class AppointmentServieSql : IAppointmentInterfaceSql
                     ORDER BY at.hours;";
 
         return await connection.QueryAsync<TimeSpan>(sql, new { psychologistId, weekDay });
+    }
+
+    public async Task<IEnumerable<ServiceDayHourDTO>> GetServiceDays (int psychologistId)
+    {
+        using var connection = DBConnection.Connection();
+
+        var sql = @"SELECT sd.week_days AS WeekDay,
+                           TIME_FORMAT(at.hours, '%H:%i') AS Hour
+                    FROM service_days sd
+                    JOIN avaliable_time at ON at.serviceDay_id = sd.id
+                    WHERE sd.psychologist_id = @psychologistId
+                      AND at.status != 'bloqueado'
+                    ORDER BY sd.week_days, at.hours;";
+
+        return await connection.QueryAsync<ServiceDayHourDTO>(sql, new { psychologistId });
     }
 
     public async Task<HashSet<TimeSpan>> GetTakenHours (int psychologistId, DateTime start, DateTime end)
