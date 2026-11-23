@@ -120,6 +120,16 @@ public class PatientService : IPatientInterface
         };
     }
 
+    public async Task<Result<IEnumerable<ListPatientDTO>>> ListPatientNotActive()
+    {
+        var result = await _patientSQL.ListAllPatientNotActive();
+        return new Result<IEnumerable<ListPatientDTO>>
+        {
+            Success = true,
+            Data = result
+        };
+    }
+
     public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto)
     {
         var patient = new UserModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
@@ -165,6 +175,48 @@ public class PatientService : IPatientInterface
     {
         Success = true,
         Data = pacientes
+    };
+}
+
+public async Task<Result<bool>> DeletePatient(int id, int? psychologistId)
+{
+    int rowsAffected = await _patientSQL.DeletePatient(id, psychologistId);
+    if (rowsAffected > 0)
+    {
+        return new Result<bool>
+        {
+            Success = true,
+            Data = true,
+            Message = "Paciente desativado com sucesso."
+        };
+    }
+
+    return new Result<bool>
+    {
+        Success = false,
+        Data = false,
+        Message = "Paciente não encontrado ou não vinculado a este psicólogo."
+    };
+}
+
+public async Task<Result<bool>> ReactivatePatient(int id, int? psychologistId)
+{
+    int rowsAffected = await _patientSQL.ReactivatePatient(id, psychologistId);
+    if (rowsAffected > 0)
+    {
+        return new Result<bool>
+        {
+            Success = true,
+            Data = true,
+            Message = "Paciente reativado com sucesso."
+        };
+    }
+
+    return new Result<bool>
+    {
+        Success = false,
+        Data = false,
+        Message = "Paciente não encontrado, já ativo ou não vinculado a este psicólogo."
     };
 }
 }

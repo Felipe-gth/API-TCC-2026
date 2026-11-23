@@ -77,6 +77,22 @@ public class PatientController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "A")]
+    [HttpGet("list-not-active")]
+    public async Task<IActionResult> ListPatientNotActive()
+    {
+        try
+        {
+            var result = await _patient.ListPatientNotActive();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
     [Authorize(Roles = "A,P")]
     [HttpPost("link-psychologist")]
     public async Task<IActionResult> LinkPatientToPsychologist([FromBody] LinkPatientPsychologistDTO dto)
@@ -150,5 +166,69 @@ public async Task<IActionResult> ListPatientNotActiveFromPsychologist(
 
     return NotFound();
 }
+
+    // Admin mexe com qualquer paciente; psicólogo só com os vinculados a ele.
+    private int? GetPsychologistIdFromToken()
+    {
+        if (User.IsInRole("A"))
+        {
+            return null;
+        }
+
+        var rawId = User.FindFirst("id")?.Value;
+        return int.TryParse(rawId, out var parsed) ? parsed : null;
+    }
+
+    [Authorize(Roles = "P,A")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePatient(int id)
+    {
+        try
+        {
+            var psychologistId = GetPsychologistIdFromToken();
+            if (psychologistId == null && !User.IsInRole("A"))
+            {
+                return Forbid();
+            }
+
+            var result = await _patient.DeletePatient(id, psychologistId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
+    [Authorize(Roles = "P,A")]
+    [HttpPut("reactivate/{id}")]
+    public async Task<IActionResult> ReactivatePatient(int id)
+    {
+        try
+        {
+            var psychologistId = GetPsychologistIdFromToken();
+            if (psychologistId == null && !User.IsInRole("A"))
+            {
+                return Forbid();
+            }
+
+            var result = await _patient.ReactivatePatient(id, psychologistId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
     
 }

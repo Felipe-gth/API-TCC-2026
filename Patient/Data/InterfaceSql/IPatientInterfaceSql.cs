@@ -15,9 +15,12 @@ public interface IPatientInterfaceSql
     Task<int> CreateEmailAsync(EmailModel email);
     Task<ListPatientDTO> GetPatientFromIdAsync(int id);
     Task<IEnumerable<ListPatientDTO>> ListAllPatient();
+    Task<IEnumerable<ListPatientDTO>> ListAllPatientNotActive();
     Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId);
     Task<bool> EditPatientAsync(UserModel user);
     Task<bool> LinkPatientToPsychologistSql(int patientId, int psychologistId);
     Task<ReturnPatientPsychologistDTO> GetActivePsychologistSql(int patientId);
     Task<IEnumerable<ListPatientDTO>>ListPatientNotActiveFromPsychologistDb(int psychologistId);
+    Task<int> DeletePatient(int id, int? psychologistId);
+    Task<int> ReactivatePatient(int id, int? psychologistId);
 }

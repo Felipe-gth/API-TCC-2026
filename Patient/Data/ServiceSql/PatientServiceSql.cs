@@ -91,6 +91,16 @@ public class PatientServiceSql : IPatientInterfaceSql
         return listpcte;
     }
 
+    public async Task<IEnumerable<ListPatientDTO>> ListAllPatientNotActive()
+    {
+        using var connection = DBConnection.Connection();
+
+        var listpcte = await connection.QueryAsync<ListPatientDTO>(
+            "SELECT id, name, lastName, cpf, age, UPPER(role) AS role, isActive FROM patient where isActive = false"
+        );
+        return listpcte;
+    }
+
     public async Task<IEnumerable<ListPatientDTO>> ListPatientsByPsychologist(int psychologistId)
     {
         using var connection = DBConnection.Connection();
@@ -108,7 +118,8 @@ public class PatientServiceSql : IPatientInterfaceSql
               FROM patient_psychologist pp
               JOIN patient p ON p.id = pp.patient_id
               WHERE pp.psychologist_id = @psychologistId
-                AND pp.active = 1;",
+                AND pp.active = 1
+                AND p.isActive = 1;",
             new { psychologistId });
         return listpcte;
     }
@@ -222,5 +233,53 @@ public class PatientServiceSql : IPatientInterfaceSql
     );
 
     return listpcte;
+}
+
+public async Task<int> DeletePatient(int id, int? psychologistId)
+{
+    using var connection = DBConnection.Connection();
+
+    var updated = await connection.ExecuteAsync(
+        @"UPDATE patient
+          SET isActive = false
+          WHERE id = @id
+            AND isActive = true
+            AND (
+                @psychologistId IS NULL
+                OR EXISTS (
+                    SELECT 1 FROM patient_psychologist pp
+                    WHERE pp.patient_id = patient.id
+                      AND pp.psychologist_id = @psychologistId
+                      AND pp.active = 1
+                )
+            )",
+        new { id, psychologistId }
+    );
+
+    return updated;
+}
+
+public async Task<int> ReactivatePatient(int id, int? psychologistId)
+{
+    using var connection = DBConnection.Connection();
+
+    var updated = await connection.ExecuteAsync(
+        @"UPDATE patient
+          SET isActive = true
+          WHERE id = @id
+            AND isActive = false
+            AND (
+                @psychologistId IS NULL
+                OR EXISTS (
+                    SELECT 1 FROM patient_psychologist pp
+                    WHERE pp.patient_id = patient.id
+                      AND pp.psychologist_id = @psychologistId
+                      AND pp.active = 1
+                )
+            )",
+        new { id, psychologistId }
+    );
+
+    return updated;
 }
 }

@@ -40,6 +40,22 @@ public class PsychologistController : ControllerBase
         }
         
     }
+    [Authorize(Roles = "A")]
+    [HttpGet("list-not-active")]
+    public async Task<IActionResult> ListPsychologistNotActive()
+    {
+        try
+        {
+            var result = await _psychologist.ListPsychologistNotActive();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> RegisterPsychologist([FromBody] RegisterPsychologistDTO dto)
     {
@@ -111,6 +127,26 @@ public class PsychologistController : ControllerBase
         try
         {
             var result = await _psychologist.DeletePsychologist(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
+    [Authorize(Roles = "A")]
+    [HttpPut("reactivate/{id}")]
+    public async Task<IActionResult> ReactivatePsychologist(int id)
+    {
+        try
+        {
+            var result = await _psychologist.ReactivatePsychologist(id);
             if (result.Success)
             {
                 return Ok(result);

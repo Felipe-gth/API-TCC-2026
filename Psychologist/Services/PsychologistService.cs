@@ -35,6 +35,16 @@ public class PsychologistService : IPsychologistInterface
         };
     }
 
+    public async Task<Result<IEnumerable<ListPsychologistDTO>>> ListPsychologistNotActive()
+    {
+        var result = await _psychologistSQL.ListPsychologistNotActive();
+        return new Result<IEnumerable<ListPsychologistDTO>>
+        {
+            Success = true,
+            Data = result
+        };
+    }
+
     public async Task<Result<ListPsychologistDTO>> RegisterPsychologist(RegisterPsychologistDTO dto)
     {
         if (!UserService.TestCpf(dto.CPF))
@@ -124,6 +134,27 @@ public class PsychologistService : IPsychologistInterface
             Success = false,
             Data = false,
             Message = "Psicólogo não encontrado."
+        };
+    }
+
+    public async Task<Result<bool>> ReactivatePsychologist(int id)
+    {
+        int rowsAffected = await _psychologistSQL.ReactivatePsychologist(id);
+        if (rowsAffected > 0)
+        {
+            return new Result<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = "Psicólogo reativado com sucesso."
+            };
+        }
+
+        return new Result<bool>
+        {
+            Success = false,
+            Data = false,
+            Message = "Psicólogo não encontrado ou já está ativo."
         };
     }
 }

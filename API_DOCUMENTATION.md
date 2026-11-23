@@ -97,7 +97,7 @@ Role is returned in login response and validated via `[Authorize(Roles = "...")]
 
 ### 1. Login
 
-Authenticate user and receive JWT token.
+Authenticate user and receive JWT token. Contas de pacientes e psicólogos desativados (`isActive = false`) não conseguem entrar — a autenticação retorna `400` com `success: false`.
 
 **Endpoint:** `POST /api/user/login`  
 **Auth:** Public (no token required)
@@ -341,7 +341,8 @@ Get list of all patients.
       "lastName": "Silva",
       "cpf": "12345678901",
       "age": "25",
-      "role": "C"
+      "role": "C",
+      "isActive": true
     }
   ]
 }
@@ -349,7 +350,66 @@ Get list of all patients.
 
 ---
 
-### 4. Link Patient to Psychologist
+### 4. List Inactive Patients (admin)
+
+Returns all deactivated patients (global). Does not include patients still active.
+
+**Endpoint:** `GET /api/patient/list-not-active`  
+**Auth:** Required (Role: A - Admin)
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 2,
+      "name": "Ana",
+      "lastName": "Oliveira",
+      "cpf": "98765432100",
+      "age": "30",
+      "role": "C",
+      "isActive": false
+    }
+  ]
+}
+```
+
+---
+
+### 5. List Inactive Patients of a Psychologist
+
+Returns deactivated patients linked to the given psychologist.
+
+**Endpoint:** `GET /api/patient/{psychologistId}/listPatientNotActive`  
+**Auth:** Required (Role: P, A)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `psychologistId` | integer | Psychologist ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 2,
+      "name": "Ana",
+      "lastName": "Oliveira",
+      "cpf": "98765432100",
+      "age": "30",
+      "role": "C",
+      "isActive": false
+    }
+  ]
+}
+```
+
+---
+
+### 6. Link Patient to Psychologist
 
 Associate a patient with a psychologist.
 
@@ -374,7 +434,7 @@ Associate a patient with a psychologist.
 
 ---
 
-### 5. Get Patient's Psychologist
+### 7. Get Patient's Psychologist
 
 Get the psychologist assigned to a patient.
 
@@ -397,6 +457,52 @@ Get the psychologist assigned to a patient.
     "lastName": "Santos",
     "specialization": "Clinical Psychology"
   }
+}
+```
+
+---
+
+### 8. Delete Patient (soft delete)
+
+Desativa o paciente (`isActive = false`), sem apagar seus registros. Admin pode desativar qualquer paciente; psicólogo apenas pacientes vinculados a ele. Após a desativação o paciente aparece nas rotas de inativos e desaparece da listagem normal.
+
+**Endpoint:** `DELETE /api/patient/{id}`  
+**Auth:** Required (Role: P, A)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Patient ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": true,
+  "message": "Paciente desativado com sucesso."
+}
+```
+
+---
+
+### 9. Reactivate Patient
+
+Reativa um paciente desativado (`isActive = true`). Admin pode reativar qualquer paciente; psicólogo apenas os vinculados a ele.
+
+**Endpoint:** `PUT /api/patient/reactivate/{id}`  
+**Auth:** Required (Role: P, A)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Patient ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": true,
+  "message": "Paciente reativado com sucesso."
 }
 ```
 
@@ -432,7 +538,35 @@ Get list of all psychologists.
 
 ---
 
-### 2. Register Psychologist
+### 2. List Inactive Psychologists
+
+Returns all deactivated psychologists (admin only). Active ones are returned by `GET /api/psychologist/list`.
+
+**Endpoint:** `GET /api/psychologist/list-not-active`  
+**Auth:** Required (Role: A - Admin)
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 2,
+      "name": "Carlos",
+      "lastName": "Lima",
+      "cpf": "11122233344",
+      "age": "42",
+      "crp": "12345678",
+      "specialization": "Clinical Psychology",
+      "isActive": false
+    }
+  ]
+}
+```
+
+---
+
+### 3. Register Psychologist
 
 Create a new psychologist account.
 
@@ -469,7 +603,7 @@ Create a new psychologist account.
 
 ---
 
-### 3. Edit Psychologist
+### 4. Edit Psychologist
 
 Update psychologist information.
 
@@ -499,7 +633,7 @@ Update psychologist information.
 
 ---
 
-### 4. Delete Psychologist (soft delete)
+### 5. Delete Psychologist (soft delete)
 
 Desativa o psicólogo (`isActive = false`), sem apagar seus registros. O psicólogo deixa de aparecer nas listagens e não pode mais ser encontrado por ID.
 
@@ -517,6 +651,29 @@ Desativa o psicólogo (`isActive = false`), sem apagar seus registros. O psicól
   "success": true,
   "data": true,
   "message": "Psicólogo excluído com sucesso."
+}
+```
+
+---
+
+### 6. Reactivate Psychologist
+
+Reativa um psicólogo desativado (`isActive = true`), voltando a aparecer nas listagens e liberando o login.
+
+**Endpoint:** `PUT /api/psychologist/reactivate/{id}`  
+**Auth:** Required (Role: A - Admin)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Psychologist ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": true,
+  "message": "Psicólogo reativado com sucesso."
 }
 ```
 
@@ -838,7 +995,8 @@ Create a new admin user.
   "lastName": "Silva",
   "cpf": "12345678901",
   "age": "25",
-  "role": "C"
+  "role": "C",
+  "isActive": true
 }
 ```
 
@@ -849,8 +1007,10 @@ Create a new admin user.
   "name": "Maria",
   "lastName": "Santos",
   "cpf": "12345678901",
+  "age": "35",
   "crp": "12345678",
-  "specialization": "Clinical Psychology"
+  "specialization": "Clinical Psychology",
+  "isActive": true
 }
 ```
 

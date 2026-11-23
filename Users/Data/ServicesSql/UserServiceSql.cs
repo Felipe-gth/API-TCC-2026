@@ -11,13 +11,13 @@ public class UserServiceSql : IUserSql
     {
         using var connection = DBConnection.Connection();
 
-        var psi = connection.QueryFirstOrDefault<string>("SELECT password FROM psychologist WHERE cpf = @cpf",
+        var psi = connection.QueryFirstOrDefault<string>("SELECT password FROM psychologist WHERE cpf = @cpf AND isActive = true",
             new {cpf = user.CPF});
 
         var adm = connection.QueryFirstOrDefault<string>("SELECT password FROM admin WHERE cpf = @cpf",
             new {cpf = user.CPF});
 
-        var patient = connection.QueryFirstOrDefault<string>("SELECT password FROM patient WHERE cpf = @cpf",
+        var patient = connection.QueryFirstOrDefault<string>("SELECT password FROM patient WHERE cpf = @cpf AND isActive = true",
             new {cpf = user.CPF});
 
         if(!string.IsNullOrEmpty(patient) && VerifyPassword(user.Password, patient))
