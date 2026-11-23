@@ -64,12 +64,28 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
     public async Task<int> EditPsychologist(PsychologistModel p)
     {
         using var connection = DBConnection.Connection();
+
+        // Senha em branco: mantém a senha atual do psicólogo.
+        if (string.IsNullOrWhiteSpace(p.Password))
+        {
+            var updatedWithoutPassword = await connection.ExecuteAsync(
+                @"UPDATE psychologist
+                  SET name = @name, lastName = @lastName, cpf = @cpf, age = @age,
+                      crp = @crp, specialization = @specialization
+                  WHERE id = @id AND isActive = true",
+                new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, crp = p.CRP, specialization = p.Specialization }
+            );
+            return updatedWithoutPassword;
+        }
+
+        string hashpass = BCrypt.Net.BCrypt.HashPassword(p.Password);
+
         var updated = await connection.ExecuteAsync(
             @"UPDATE psychologist
               SET name = @name, lastName = @lastName, cpf = @cpf, age = @age,
-                  crp = @crp, specialization = @specialization
+                  crp = @crp, specialization = @specialization, password = @password
               WHERE id = @id AND isActive = true",
-            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, crp = p.CRP, specialization = p.Specialization }
+            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, crp = p.CRP, specialization = p.Specialization, password = hashpass }
         );
         return updated;
     }

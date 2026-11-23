@@ -29,4 +29,7 @@ public class UpdatePsychologistDTO
     [Required(ErrorMessage = "Specialization is required")]
     [MaxLength(50, ErrorMessage = "Specialization must be at most 50 characters long")]
     public string Specialization { get; set; } = string.Empty;
+
+    // Opcional: em branco mantém a senha atual do psicólogo.
+    public string? Password { get; set; }
 }

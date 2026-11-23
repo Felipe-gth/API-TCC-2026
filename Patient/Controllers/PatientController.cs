@@ -134,13 +134,34 @@ public class PatientController : ControllerBase
     }
 
     // Edit patient endpoint
-    [Authorize(Roles = "C")]
+    [Authorize(Roles = "C,P,A")]
     [HttpPut("edit")]
     public async Task<IActionResult> EditPatient([FromBody] EditPatientDTO dto)
     {
         try
         {
-            var result = await _patient.EditPatientAsync(dto);
+            // Paciente só edita o próprio cadastro.
+            if (User.IsInRole("C"))
+            {
+                var rawId = User.FindFirst("id")?.Value;
+                if (!int.TryParse(rawId, out var tokenId) || tokenId != dto.Id)
+                {
+                    return Forbid();
+                }
+            }
+
+            // Psicólogo só edita pacientes vinculados a ele; adm edita qualquer um.
+            int? psychologistId = null;
+            if (User.IsInRole("P"))
+            {
+                psychologistId = GetPsychologistIdFromToken();
+                if (psychologistId == null)
+                {
+                    return Forbid();
+                }
+            }
+
+            var result = await _patient.EditPatientAsync(dto, psychologistId);
             if (result.Success)
             {
                 return Ok(result);

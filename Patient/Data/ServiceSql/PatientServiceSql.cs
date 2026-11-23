@@ -124,15 +124,37 @@ public class PatientServiceSql : IPatientInterfaceSql
         return listpcte;
     }
 
-    public async Task<bool> EditPatientAsync(UserModel user)
+    public async Task<bool> EditPatientAsync(UserModel user, int? psychologistId)
     {
         using var connection = DBConnection.Connection();
+
+        // Psicólogo só edita pacientes vinculados a ele; adm (psychologistId nulo) edita qualquer um.
+        const string linkCondition = @"
+            AND (
+                @psychologistId IS NULL
+                OR EXISTS (
+                    SELECT 1 FROM patient_psychologist pp
+                    WHERE pp.patient_id = patient.id
+                      AND pp.psychologist_id = @psychologistId
+                      AND pp.active = 1
+                )
+            )";
+
+        // Senha em branco: mantém a senha atual do paciente.
+        if (string.IsNullOrWhiteSpace(user.Password))
+        {
+            var editWithoutPassword = await connection.ExecuteAsync(
+                "UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age WHERE id = @id" + linkCondition,
+                new { name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, id = user.Id, psychologistId });
+
+            return editWithoutPassword > 0;
+        }
 
         string hashpass = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
         var editPatient = await connection.ExecuteAsync(
-            "UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password WHERE id = @id",
-            new { name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, password = hashpass, id = user.Id });
+            "UPDATE patient SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password WHERE id = @id" + linkCondition,
+            new { name = user.Name, lastName = user.LastName, cpf = user.CPF, age = user.Age, password = hashpass, id = user.Id, psychologistId });
 
         return editPatient > 0;
     }

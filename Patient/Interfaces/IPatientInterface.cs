@@ -21,7 +21,7 @@ public interface IPatientInterface
     Task<Result<IEnumerable<ListPatientDTO>>> ListPatientNotActive();
     Task<Result<bool>> LinkPatientToPsychologist(LinkPatientPsychologistDTO dto);
     Task<Result<ReturnPatientPsychologistDTO>> GetPatientPsychologist(int patientId);
-    Task<Result<bool>> EditPatientAsync(EditPatientDTO dto);
+    Task<Result<bool>> EditPatientAsync(EditPatientDTO dto, int? psychologistId);
     Task<Result<IEnumerable<ListPatientDTO>>>ListPatientNotActiveFromPsychologist(int psychologistId);
     Task<Result<bool>> DeletePatient(int id, int? psychologistId);
     Task<Result<bool>> ReactivatePatient(int id, int? psychologistId);

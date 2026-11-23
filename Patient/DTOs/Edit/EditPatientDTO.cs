@@ -14,11 +14,10 @@ public class EditPatientDTO
     public string CPF { get; set; }
     [Required]
     public string Age { get; set; }
-    [Required]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
 
-    public EditPatientDTO(int id, string name, string lastName, string cpf, string age, string password)
+    public EditPatientDTO(int id, string name, string lastName, string cpf, string age, string? password)
     {
         Id = id;
         Name = name;

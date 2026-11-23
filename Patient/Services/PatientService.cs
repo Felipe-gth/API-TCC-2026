@@ -130,10 +130,10 @@ public class PatientService : IPatientInterface
         };
     }
 
-    public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto)
+    public async Task<Result<bool>> EditPatientAsync(EditPatientDTO dto, int? psychologistId)
     {
-        var patient = new UserModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, "C");
-        bool data = await _patientSQL.EditPatientAsync(patient);
+        var patient = new UserModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password ?? string.Empty, "C");
+        bool data = await _patientSQL.EditPatientAsync(patient, psychologistId);
         if (data)
         {
             return new Result<bool>

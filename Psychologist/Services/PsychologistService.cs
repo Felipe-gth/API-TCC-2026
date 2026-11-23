@@ -86,8 +86,8 @@ public class PsychologistService : IPsychologistInterface
             };
         }
 
-        // A senha não é alterada nesta rota: o UPDATE em PsychologistServiceSql não a inclui.
-        var psychologist = new PsychologistModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, string.Empty, dto.Specialization, dto.CRP);
+        // Senha em branco mantém a senha atual; o UPDATE em PsychologistServiceSql só a inclui quando informada.
+        var psychologist = new PsychologistModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password ?? string.Empty, dto.Specialization, dto.CRP);
         await _psychologistSQL.EditPsychologist(psychologist);
 
         return new Result<bool>
