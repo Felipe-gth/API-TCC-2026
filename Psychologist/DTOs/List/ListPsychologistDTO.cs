@@ -12,18 +12,21 @@ public class ListPsychologistDTO
 
     [Required (ErrorMessage = "CPF is required")]
     public string CPF { get; set; }
-    
+
+    public string Age { get; set; }
+
     [Required (ErrorMessage = "CRP is required")]
     public string CRP { get; set;}
     public string Specialization  { get; set; }
 
     
 
-    public ListPsychologistDTO(int id, string name, string lastName, string cpf, string crp, string specialization ){
+    public ListPsychologistDTO(int id, string name, string lastName, string cpf, string age, string crp, string specialization ){
         Id = id;
         Name = name;
         LastName = lastName;
         CPF = cpf;
+        Age = age;
         CRP = crp;
         Specialization = specialization;
     }

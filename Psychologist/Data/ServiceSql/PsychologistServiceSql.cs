@@ -14,7 +14,7 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
         using var connection = DBConnection.Connection();
 
         var list = await connection.QueryAsync<ListPsychologistDTO>(
-            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE isActive = true"
+            "SELECT id, name, lastName, cpf, age, crp, specialization FROM psychologist WHERE isActive = true"
         );
 
         return list;
@@ -53,10 +53,12 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
     public async Task<int> EditPsychologist(PsychologistModel p)
     {
         using var connection = DBConnection.Connection();
-        string hashpass = BCrypt.Net.BCrypt.HashPassword(p.Password);
         var updated = await connection.ExecuteAsync(
-            "UPDATE psychologist SET name = @name, lastName = @lastName, cpf = @cpf, age = @age, password = @password, crp = @crp, specialization = @specialization WHERE id = @id",
-            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, password = hashpass, crp = p.CRP, specialization = p.Specialization }
+            @"UPDATE psychologist
+              SET name = @name, lastName = @lastName, cpf = @cpf, age = @age,
+                  crp = @crp, specialization = @specialization
+              WHERE id = @id AND isActive = true",
+            new { id = p.Id, name = p.Name, lastName = p.LastName, cpf = p.CPF, age = p.Age, crp = p.CRP, specialization = p.Specialization }
         );
         return updated;
     }
@@ -66,7 +68,7 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
         using var connection = DBConnection.Connection();
 
         var result = await connection.QuerySingleOrDefaultAsync<ListPsychologistDTO>(
-            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE id = @id AND isActive = true",
+            "SELECT id, name, lastName, cpf, age, crp, specialization FROM psychologist WHERE id = @id AND isActive = true",
             new { id });
 
         return result;

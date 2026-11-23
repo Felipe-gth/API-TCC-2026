@@ -53,7 +53,7 @@ public class PsychologistService : IPsychologistInterface
             return new Result<ListPsychologistDTO>
             {
                 Success = true,
-                Data = new ListPsychologistDTO(result, dto.Name, dto.LastName, dto.CPF, dto.CRP, dto.Specialization)
+                Data = new ListPsychologistDTO(result, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.CRP, dto.Specialization)
             };
         }
         return new Result<ListPsychologistDTO>
@@ -65,21 +65,26 @@ public class PsychologistService : IPsychologistInterface
 
     public async Task<Result<bool>> EditPsychologist(UpdatePsychologistDTO dto)
     {
-        var psychologist = new PsychologistModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, dto.Specialization, dto.CRP);
-        int rowsAffected = await _psychologistSQL.EditPsychologist(psychologist);
-        if (rowsAffected > 0)
+        var existing = await _psychologistSQL.GetPsychologistById(dto.Id);
+        if (existing == null)
         {
             return new Result<bool>
             {
-                Success = true,
-                Data = true
+                Success = false,
+                Data = false,
+                Message = "Psicólogo não encontrado."
             };
         }
 
+        // A senha não é alterada nesta rota: o UPDATE em PsychologistServiceSql não a inclui.
+        var psychologist = new PsychologistModel(dto.Id, dto.Name, dto.LastName, dto.CPF, dto.Age, string.Empty, dto.Specialization, dto.CRP);
+        await _psychologistSQL.EditPsychologist(psychologist);
+
         return new Result<bool>
         {
-            Success = false,
-            Data = false
+            Success = true,
+            Data = true,
+            Message = "Psicólogo atualizado com sucesso."
         };
     }
 

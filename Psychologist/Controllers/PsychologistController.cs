@@ -62,6 +62,7 @@ public class PsychologistController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "A")]
     [HttpPut("edit")]
     public async Task<IActionResult> EditPsychologist([FromBody] UpdatePsychologistDTO dto)
     {

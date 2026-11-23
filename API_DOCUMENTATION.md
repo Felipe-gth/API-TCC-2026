@@ -474,7 +474,7 @@ Create a new psychologist account.
 Update psychologist information.
 
 **Endpoint:** `PUT /api/psychologist/edit`  
-**Auth:** Required
+**Auth:** Required (Role: A - Admin). A senha não é alterada por esta rota.
 
 #### Request Body
 ```json
@@ -484,8 +484,7 @@ Update psychologist information.
   "lastName": "string (required)",
   "cpf": "string (11 chars, required)",
   "age": "string (1-100, required)",
-  "password": "string (min 6 chars, required)",
-  "crp": "string (7 chars, required)",
+  "crp": "string (8 chars, required)",
   "specialization": "string (max 50 chars, required)"
 }
 ```
@@ -495,6 +494,29 @@ Update psychologist information.
 {
   "success": true,
   "data": true
+}
+```
+
+---
+
+### 4. Delete Psychologist (soft delete)
+
+Desativa o psicólogo (`isActive = false`), sem apagar seus registros. O psicólogo deixa de aparecer nas listagens e não pode mais ser encontrado por ID.
+
+**Endpoint:** `DELETE /api/psychologist/{id}`  
+**Auth:** Required (Role: A - Admin)
+
+#### Path Parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | integer | Psychologist ID |
+
+#### Response (200 OK)
+```json
+{
+  "success": true,
+  "data": true,
+  "message": "Psicólogo excluído com sucesso."
 }
 ```
 
