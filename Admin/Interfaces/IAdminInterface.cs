@@ -1,7 +1,8 @@
 namespace Api.Admin.Interfaces;
 using Api.Admin.DTOs.Register;
+using Api.Shared.DTOs.Result;
 
 public interface IAdminInterface
 {
-    Task<bool> CreateAdminAsync(RegisterAdminDTO admin);
+    Task<Result<bool>> CreateAdminAsync(RegisterAdminDTO admin);
 }

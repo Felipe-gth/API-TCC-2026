@@ -9,7 +9,7 @@ public class DBConnection
         try
         {
             //var strConnection = "server=localhost;uid=root;password=Felipemysql@6401;database=clinica";
-            var strConnection = "server=localhost;uid=root;database=clinica";
+            var strConnection = "server=localhost;uid=chimello;password=14570;database=clinica";
             var connection = new MySqlConnection(strConnection);
             connection.Open();
 

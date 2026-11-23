@@ -38,16 +38,10 @@ public class AppointmentService : IAppointmentInterface
 
         var model = new AppointmentModel(dto.Type, dto.DateAndTime, dto.Notes, dto.MaritalStatus, dto.PhysicalHealth, dto.HadTreatment, dto.Habits, dto.SearchReason, dto.PatientId, dto.PsychologistId);
         var (success, id) = await _appointmentSql.CreateAppointmentSql(model);
-        var type = model.Type switch
-        {
-            "O" => "Online",
-            "P" => "Presencial",
-            _ => "P"
-        };
 
         if (success)
         {
-            var appointmentReturn = new ReturnAppointmentDTOsimple(id, type, model.Date.Day, model.Date.Month, model.Date.Hour, model.PatientId, model.PsychologistId);
+            var appointmentReturn = new ReturnAppointmentDTOsimple(id, model.Type, model.Date.Day, model.Date.Month, model.Date.Hour, model.PatientId, model.PsychologistId);
             var resultReturn = new Result<ReturnAppointmentDTOsimple>(true, appointmentReturn);
             return resultReturn;
         }
@@ -143,12 +137,18 @@ public class AppointmentService : IAppointmentInterface
     public async Task<Result<List<ReturnAppointmentListDTO>>> GetPatientAppointments (int patientId)
     {
         var appointments = await _appointmentSql.GetAppointmentsByPatientSql(patientId);
-        return new Result<List<ReturnAppointmentListDTO>>(true, appointments.ToList());
+        var list = appointments.ToList();
+        if (list.Count == 0)
+            return new Result<List<ReturnAppointmentListDTO>>(false, null) { Message = "NENHUM_AGENDAMENTO" };
+        return new Result<List<ReturnAppointmentListDTO>>(true, list);
     }
 
     public async Task<Result<List<ReturnAppointmentListDTO>>> GetPsychologistAppointments (int psychologistId)
     {
         var appointments = await _appointmentSql.GetAppointmentsByPsychologistSql(psychologistId);
-        return new Result<List<ReturnAppointmentListDTO>>(true, appointments.ToList());
+        var list = appointments.ToList();
+        if (list.Count == 0)
+            return new Result<List<ReturnAppointmentListDTO>>(false, null) { Message = "NENHUM_AGENDAMENTO" };
+        return new Result<List<ReturnAppointmentListDTO>>(true, list);
     }
 } 

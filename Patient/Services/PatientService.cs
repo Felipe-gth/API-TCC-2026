@@ -163,6 +163,7 @@ public class PatientService : IPatientInterface
 
     return new Result<IEnumerable<ListPatientDTO>>
     {
+        Success = true,
         Data = pacientes
     };
 }

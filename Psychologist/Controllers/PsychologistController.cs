@@ -35,7 +35,8 @@ public class PsychologistController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Error: " + ex.Message);
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
         
     }
@@ -56,7 +57,8 @@ public class PsychologistController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Error: " + ex.Message);
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -77,7 +79,8 @@ public class PsychologistController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Error: " + ex.Message);
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -95,7 +98,28 @@ public class PsychologistController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Error: " + ex.Message);
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
+        }
+    }
+
+    [Authorize(Roles = "A")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePsychologist(int id)
+    {
+        try
+        {
+            var result = await _psychologist.DeletePsychologist(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 }

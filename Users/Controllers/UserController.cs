@@ -36,7 +36,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -54,7 +55,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -73,7 +75,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -92,7 +95,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -111,7 +115,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -130,7 +135,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -149,7 +155,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -168,7 +175,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -188,7 +196,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -207,7 +216,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -226,7 +236,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -246,7 +257,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -265,7 +277,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -284,7 +297,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -303,7 +317,8 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 }

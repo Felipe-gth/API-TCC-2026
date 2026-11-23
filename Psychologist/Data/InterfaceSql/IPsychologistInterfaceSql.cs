@@ -9,4 +9,5 @@ public interface IPsychologistInterfaceSql
     Task<int> RegisterPsychologist(PsychologistModel p);
     Task<int> EditPsychologist(PsychologistModel p);
     Task<ListPsychologistDTO> GetPsychologistById(int id);
+    Task<int> DeletePsychologist(int id);
 }

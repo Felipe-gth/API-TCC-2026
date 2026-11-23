@@ -51,7 +51,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
         
     }
@@ -71,7 +72,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -90,7 +92,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -109,7 +112,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -120,7 +124,7 @@ public class AppointmentController : ControllerBase
         try
         {
             var result = await _appointment.GetPatientAppointments(patientId);
-            if (result.Data != null)
+            if (result.Success && result.Data != null)
             {
                 return Ok(result);
             }
@@ -128,7 +132,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -139,7 +144,7 @@ public class AppointmentController : ControllerBase
         try
         {
             var result = await _appointment.GetPsychologistAppointments(psychologistId);
-            if (result.Data != null)
+            if (result.Success && result.Data != null)
             {
                 return Ok(result);
             }
@@ -147,7 +152,8 @@ public class AppointmentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -162,11 +168,12 @@ public class AppointmentController : ControllerBase
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+            return NotFound(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 }

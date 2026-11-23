@@ -36,7 +36,7 @@ public class AppointmentServieSql : IAppointmentInterfaceSql
     {
         using var connection = DBConnection.Connection();
 
-        var sql = @"SELECT id, type, dateTime AS date, notes, hadTreatment, physicalHealth, maritalStatus, habits, searchReason, status, patient_id AS patientId, psychologist_id AS psychologistId FROM appointment WHERE id = @id";
+        var sql = @"SELECT id, type, dateTime AS date, notes, IF(hadTreatment = 1, 'S', 'N') AS hadTreatment, physicalHealth, maritalStatus, habits, searchReason, status, patient_id AS patientId, psychologist_id AS psychologistId FROM appointment WHERE id = @id";
 
         var appointment = await connection.QuerySingleOrDefaultAsync<AppointmentModel>(sql, new { id });
 

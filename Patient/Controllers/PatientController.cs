@@ -33,7 +33,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -52,7 +53,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
     [Authorize(Roles = "P,A")]
@@ -70,7 +72,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -89,7 +92,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -108,7 +112,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 
@@ -128,7 +133,8 @@ public class PatientController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 

@@ -14,7 +14,7 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
         using var connection = DBConnection.Connection();
 
         var list = await connection.QueryAsync<ListPsychologistDTO>(
-            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist"
+            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE isActive = true"
         );
 
         return list;
@@ -66,9 +66,21 @@ public class PsychologistServiceSql : IPsychologistInterfaceSql
         using var connection = DBConnection.Connection();
 
         var result = await connection.QuerySingleOrDefaultAsync<ListPsychologistDTO>(
-            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE id = @id",
+            "SELECT id, name, lastName, cpf, crp, specialization FROM psychologist WHERE id = @id AND isActive = true",
             new { id });
 
         return result;
+    }
+
+    public async Task<int> DeletePsychologist(int id)
+    {
+        using var connection = DBConnection.Connection();
+
+        var updated = await connection.ExecuteAsync(
+            "UPDATE psychologist SET isActive = false WHERE id = @id AND isActive = true",
+            new { id }
+        );
+
+        return updated;
     }
 }

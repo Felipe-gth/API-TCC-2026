@@ -16,17 +16,25 @@ public class AdminServiceSql : IAdminInterfaceSql
 
         string hashpass = BCrypt.HashPassword(admin.Password);
 
-        await connection.ExecuteAsync(
-            @"INSERT INTO admin (name, lastName, cpf, password, role) VALUES (@name, @lastName, @cpf, @password, @role)",
-            new
-            {
-                name = admin.Name,
-                lastName = admin.LastName,
-                cpf = admin.CPF,
-                password = hashpass,
-                role = "A",
-            }
-        );
+        try
+        {
+            await connection.ExecuteAsync(
+                @"INSERT INTO admin (name, lastName, cpf, password, role) VALUES (@name, @lastName, @cpf, @password, @role)",
+                new
+                {
+                    name = admin.Name,
+                    lastName = admin.LastName,
+                    cpf = admin.CPF,
+                    password = hashpass,
+                    role = "A",
+                }
+            );
+        }
+        catch (MySql.Data.MySqlClient.MySqlException ex) when (ex.Number == 1062)
+        {
+            // CPF duplicado
+            return -1;
+        }
 
         int id = await connection.QuerySingleAsync<int>(
             "SELECT LAST_INSERT_ID();"

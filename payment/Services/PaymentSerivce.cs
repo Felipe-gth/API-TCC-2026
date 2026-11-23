@@ -240,12 +240,18 @@ public class PaymentService : IPaymentInterface
     }
     catch (MercadoPagoApiException ex)
     {
+        // Order inexistente ou erro da API: registra e não propaga
+        // para não devolver stack trace ao remetente do webhook.
         Console.WriteLine(
             $"[Mercado Pago] Erro ao consultar Order: " +
             $"{ex.ApiError?.Message ?? ex.Message}"
         );
-
-        throw;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(
+            $"[Mercado Pago] Erro inesperado no webhook: {ex.Message}"
+        );
     }
 }
 }

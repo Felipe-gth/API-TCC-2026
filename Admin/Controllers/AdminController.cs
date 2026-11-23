@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Api.Admin.DTOs.Register;
 using Api.Admin.Models;
 using Api.Admin.Interfaces;
+using Api.Shared.DTOs.Result;
 namespace Api.Admin.Controllers;
 
 [ApiController]
@@ -22,15 +23,20 @@ public class AdminController : ControllerBase
         try
         {
             var result = await _admin.CreateAdminAsync(dto);
-            if (result)
+            if (result.Success)
             {
                 return Ok(result);
             }
-            return BadRequest("Failed to create admin.");
+            if (result.Message == "CPF ja cadastrado.")
+            {
+                return Conflict(result);
+            }
+            return BadRequest(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
+            Console.WriteLine($"[500] {ex}");
+            return StatusCode(500, "Internal server error.");
         }
     }
 }

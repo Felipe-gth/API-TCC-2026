@@ -3,6 +3,7 @@ using Api.Admin.Interfaces;
 using Api.Admin.DTOs.Register;
 using Api.Admin.Models;
 using Api.Admin.Data.InterfaceSql;
+using Api.Shared.DTOs.Result;
 public class AdminService : IAdminInterface
 {
     private readonly IAdminInterfaceSql _adminInterfaceSql;
@@ -11,17 +12,18 @@ public class AdminService : IAdminInterface
     {
         _adminInterfaceSql = adminInterfaceSql;
     }
-    public async Task<bool> CreateAdminAsync(RegisterAdminDTO admin)
+    public async Task<Result<bool>> CreateAdminAsync(RegisterAdminDTO admin)
     {
         var adminModel = new AdminModel(admin.Name, admin.LastName, admin.CPF, admin.Password, admin.Role);
         var id = await _adminInterfaceSql.CreateAdminAsync(adminModel);
-        if(id > 0)
+        if (id > 0)
         {
-            return true;
+            return new Result<bool>(true, true);
         }
-        else
+        if (id == -1)
         {
-            return false;
+            return new Result<bool>(false, false) { Message = "CPF ja cadastrado." };
         }
+        return new Result<bool>(false, false);
     }
 }

@@ -5,6 +5,7 @@ using Api.Psychologist.DTOs.Register;
 using Api.Shared.DTOs.Result;
 using Api.Psychologist.Models;
 using Api.Psychologist.Interfaces;
+using Api.User.Services;
 
 
 namespace Api.Psychologist.Services;
@@ -36,6 +37,15 @@ public class PsychologistService : IPsychologistInterface
 
     public async Task<Result<ListPsychologistDTO>> RegisterPsychologist(RegisterPsychologistDTO dto)
     {
+        if (!UserService.TestCpf(dto.CPF))
+        {
+            return new Result<ListPsychologistDTO>
+            {
+                Success = false,
+                Data = null,
+                Message = "CPF invalido."
+            };
+        }
         var psychologist = new PsychologistModel(0, dto.Name, dto.LastName, dto.CPF, dto.Age, dto.Password, dto.Specialization, dto.CRP);
         int result = await _psychologistSQL.RegisterPsychologist(psychologist);
         if (result != 0)
@@ -88,6 +98,27 @@ public class PsychologistService : IPsychologistInterface
         {
             Success = false,
             Data = null
+        };
+    }
+
+    public async Task<Result<bool>> DeletePsychologist(int id)
+    {
+        int rowsAffected = await _psychologistSQL.DeletePsychologist(id);
+        if (rowsAffected > 0)
+        {
+            return new Result<bool>
+            {
+                Success = true,
+                Data = true,
+                Message = "Psicólogo excluído com sucesso."
+            };
+        }
+
+        return new Result<bool>
+        {
+            Success = false,
+            Data = false,
+            Message = "Psicólogo não encontrado."
         };
     }
 }

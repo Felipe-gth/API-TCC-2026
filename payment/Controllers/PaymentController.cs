@@ -51,7 +51,15 @@ public async Task<IActionResult> Webhook()
     if (string.IsNullOrWhiteSpace(orderId))
         return BadRequest();
 
-    await _IPayment.ProcessWebhook(orderId);
+    try
+    {
+        await _IPayment.ProcessWebhook(orderId);
+    }
+    catch (Exception ex)
+    {
+        // Nunca devolver stack trace ao Mercado Pago; logar apenas.
+        Console.WriteLine($"[Webhook] Erro inesperado: {ex.Message}");
+    }
 
     return Ok();
 }
